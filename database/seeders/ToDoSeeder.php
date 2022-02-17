@@ -2,21 +2,20 @@
 
 namespace Database\Seeders;
 
+use App\Models\ToDo;
+use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-class DatabaseSeeder extends Seeder
+class ToDoSeeder extends Seeder
 {
     /**
-     * Seed the application's database.
+     * Run the database seeds.
      *
      * @return void
      */
     public function run()
     {
-        $this->call([
-            UserSeeder::class,
-            ToDoSeeder::class,
-        ]);
+        User::all()->each(fn (User $user) => ToDo::factory(rand(1,20))->forUser($user)->create());
     }
 }
