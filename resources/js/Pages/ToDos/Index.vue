@@ -21,7 +21,10 @@
                         </div>
                         <div v-else v-for="to_do in to_dos" :key="to_do.id">
                             <div class="flex justify-between items-center my-2">
-                                <Link :href="route('to-dos.edit', to_do)">{{to_do.title}}</Link>
+                                <div class="flex items-center">
+                                    <input type="checkbox" class="mr-2" :checked="to_do.finished" @change="toggleFinished(to_do)">
+                                    <Link :href="route('to-dos.edit', to_do)">{{to_do.title}}</Link>
+                                </div>
                                 <div class="flex">
                                     <Link :href="route('to-dos.edit', to_do)" class="rounded border border-gray-300 py-2 px-4 ml-2">Edit</Link>
                                     <form @submit.prevent="deleteToDo(to_do)">
@@ -48,6 +51,10 @@ defineProps({
 
 function deleteToDo(toDo) {
     Inertia.delete(route('to-dos.destroy', toDo))
+}
+
+function toggleFinished(toDo) {
+    Inertia.put(route('to-dos.toggle', toDo))
 }
 
 </script>

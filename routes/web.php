@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ToDoController;
+use App\Http\Controllers\ToggleToDoFinishedController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -27,6 +28,7 @@ Route::get('/', function () {
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('to-dos', ToDoController::class)->except(['show']);
+    Route::put('to-dos/{to_do}/toggle', ToggleToDoFinishedController::class)->name('to-dos.toggle');
 });
 
 require __DIR__.'/auth.php';

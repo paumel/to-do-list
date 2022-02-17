@@ -19,6 +19,15 @@ class ToDo extends Model
         'user_id',
     ];
 
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'finished' => 'boolean',
+    ];
+
     public function scopeCreatedBy(Builder $query, User $user): Builder
     {
         return $query->where('user_id', $user->id);

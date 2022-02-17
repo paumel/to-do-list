@@ -22437,8 +22437,13 @@ __webpack_require__.r(__webpack_exports__);
       _inertiajs_inertia__WEBPACK_IMPORTED_MODULE_2__.Inertia["delete"](route('to-dos.destroy', toDo));
     }
 
+    function toggleFinished(toDo) {
+      _inertiajs_inertia__WEBPACK_IMPORTED_MODULE_2__.Inertia.put(route('to-dos.toggle', toDo));
+    }
+
     var __returned__ = {
       deleteToDo: deleteToDo,
+      toggleFinished: toggleFinished,
       BreezeAuthenticatedLayout: _Layouts_Authenticated_vue__WEBPACK_IMPORTED_MODULE_0__["default"],
       Head: _inertiajs_inertia_vue3__WEBPACK_IMPORTED_MODULE_1__.Head,
       Link: _inertiajs_inertia_vue3__WEBPACK_IMPORTED_MODULE_1__.Link,
@@ -23980,21 +23985,25 @@ var _hoisted_11 = {
   "class": "flex justify-between items-center my-2"
 };
 var _hoisted_12 = {
+  "class": "flex items-center"
+};
+var _hoisted_13 = ["checked", "onChange"];
+var _hoisted_14 = {
   "class": "flex"
 };
 
-var _hoisted_13 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)("Edit");
+var _hoisted_15 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)("Edit");
 
-var _hoisted_14 = ["onSubmit"];
+var _hoisted_16 = ["onSubmit"];
 
-var _hoisted_15 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
+var _hoisted_17 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
   type: "submit",
   "class": "rounded border border-gray-300 py-2 px-4 ml-2"
 }, "Delete", -1
 /* HOISTED */
 );
 
-var _hoisted_16 = [_hoisted_15];
+var _hoisted_18 = [_hoisted_17];
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)($setup["Head"], {
     title: "To Do list"
@@ -24020,7 +24029,16 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
       }, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($props.to_dos, function (to_do) {
         return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", {
           key: to_do.id
-        }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_11, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)($setup["Link"], {
+        }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_11, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_12, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+          type: "checkbox",
+          "class": "mr-2",
+          checked: to_do.finished,
+          onChange: function onChange($event) {
+            return $setup.toggleFinished(to_do);
+          }
+        }, null, 40
+        /* PROPS, HYDRATE_EVENTS */
+        , _hoisted_13), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)($setup["Link"], {
           href: _ctx.route('to-dos.edit', to_do)
         }, {
           "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
@@ -24033,12 +24051,12 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
 
         }, 1032
         /* PROPS, DYNAMIC_SLOTS */
-        , ["href"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_12, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)($setup["Link"], {
+        , ["href"])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_14, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)($setup["Link"], {
           href: _ctx.route('to-dos.edit', to_do),
           "class": "rounded border border-gray-300 py-2 px-4 ml-2"
         }, {
           "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
-            return [_hoisted_13];
+            return [_hoisted_15];
           }),
           _: 2
           /* DYNAMIC */
@@ -24049,9 +24067,9 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
           onSubmit: (0,vue__WEBPACK_IMPORTED_MODULE_0__.withModifiers)(function ($event) {
             return $setup.deleteToDo(to_do);
           }, ["prevent"])
-        }, _hoisted_16, 40
+        }, _hoisted_18, 40
         /* PROPS, HYDRATE_EVENTS */
-        , _hoisted_14)])])]);
+        , _hoisted_16)])])]);
       }), 128
       /* KEYED_FRAGMENT */
       ))])])])])];
