@@ -28,6 +28,14 @@
                                 <input type="datetime-local" id="due_date" v-model="form.due_date" class="rounded w-full border border-gray-300" />
                             </div>
 
+                            <div class="mt-4">
+                                <label for="category_id">Category</label>
+                                <select name="category_id" id="category_id" class="rounded w-full border border-gray-300" v-model="form.category_id">
+                                    <option value=""></option>
+                                    <option :value="category.id" v-for="category in categories">{{category.title}}</option>
+                                </select>
+                            </div>
+
                             <div class="flex justify-end">
                                 <button type="submit" class="rounded border border-gray-300 py-2 px-4 mt-4">Submit</button>
                             </div>
@@ -45,10 +53,15 @@ import BreezeAuthenticatedLayout from '@/Layouts/Authenticated.vue';
 import { Head } from '@inertiajs/inertia-vue3';
 import {Inertia} from "@inertiajs/inertia";
 
+defineProps({
+    categories: Array,
+})
+
 const form = reactive({
     title: null,
     description: null,
     due_date: null,
+    category_id: null,
 })
 
 function submit() {

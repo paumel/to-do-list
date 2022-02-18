@@ -28,6 +28,14 @@
                                 <input type="datetime-local" id="due_date" v-model="form.due_date" class="rounded w-full border border-gray-300" />
                             </div>
 
+                            <div class="mt-4">
+                                <label for="category_id">Category</label>
+                                <select name="category_id" id="category_id" class="rounded w-full border border-gray-300" v-model="form.category_id">
+                                    <option value=""></option>
+                                    <option :value="category.id" v-for="category in categories" :selected="category.id == toDo.category_id">{{category.title}}</option>
+                                </select>
+                            </div>
+
                             <div class="flex justify-end">
                                 <button type="submit" class="rounded border border-gray-300 py-2 px-4 mt-4">Submit</button>
                             </div>
@@ -47,12 +55,14 @@ import {Inertia} from "@inertiajs/inertia";
 
 const props = defineProps({
     toDo: Object,
+    categories: Array,
 })
 
 const form = reactive({
     title: props.toDo.title,
     description: props.toDo.description,
     due_date: props.toDo.due_date,
+    category_id: props.toDo.category_id,
 })
 
 function submit() {

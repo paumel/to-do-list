@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Http\Controllers;
 
+use App\Models\Category;
 use App\Models\ToDo;
 use App\Models\User;
 use Carbon\Carbon;
@@ -93,6 +94,7 @@ class ToDoControllerTest extends TestCase
             ->assertSuccessful()
             ->assertInertia(fn(Assert $page) => $page
                 ->component('ToDos/Create')
+                ->has('categories')
             );
     }
 
@@ -144,6 +146,25 @@ class ToDoControllerTest extends TestCase
     }
 
     /** @test */
+    public function category_must_be_available_for_to_do_creation()
+    {
+        $user = $this->logIn();
+
+        $this->actingAs($user)->post(route('to-dos.store'), ToDo::factory()->raw(['category_id' => 2]))
+            ->assertSessionHasErrors('category_id');
+    }
+
+    /** @test */
+    public function category_must_belong_to_user_for_to_do_creation()
+    {
+        $user = $this->logIn();
+        $category = Category::factory()->forUser(User::factory()->create())->create();
+
+        $this->actingAs($user)->post(route('to-dos.store'), ToDo::factory()->raw(['category_id' => $category->id]))
+            ->assertSessionHasErrors('category_id');
+    }
+
+    /** @test */
     public function due_date_can_be_null_for_to_do_creation()
     {
         $user = $this->logIn();
@@ -186,6 +207,27 @@ class ToDoControllerTest extends TestCase
             'due_date' => $data['due_date'],
             'user_id' => $user->id,
         ]);
+    }
+
+    /** @test */
+    public function verified_user_can_create_to_do_with_category()
+    {
+        $this->withoutExceptionHandling();
+        $user = $this->logIn();
+        $category = Category::factory()->forUser($user)->create();
+        $data = ToDo::factory()->raw(['category_id' => $category->id]);
+
+        $this->actingAs($user)->post(route('to-dos.store'), $data)
+            ->assertRedirect(route('to-dos.index'));
+
+        $this->assertDatabaseHas('to_dos', [
+            'title' => $data['title'],
+            'description' => $data['description'],
+            'due_date' => $data['due_date'],
+            'user_id' => $user->id,
+        ]);
+
+        $this->assertEquals($category->id, ToDo::firstWhere('title', $data['title'])->category->id);
     }
 
     /**
@@ -234,7 +276,7 @@ class ToDoControllerTest extends TestCase
                 ->has('toDo', fn(Assert $page) => $page
                     ->where('id', $toDo->id)
                     ->etc()
-                )
+                )->has('categories')
             );
     }
 
@@ -292,6 +334,27 @@ class ToDoControllerTest extends TestCase
     }
 
     /** @test */
+    public function category_must_be_available_for_to_do_update()
+    {
+        $user = $this->logIn();
+        $toDo = ToDo::factory()->forUser($user)->create();
+
+        $this->actingAs($user)->put(route('to-dos.update', $toDo), ToDo::factory()->raw(['category_id' => 12]))
+            ->assertSessionHasErrors('category_id');
+    }
+
+    /** @test */
+    public function category_must_belong_to_user_for_to_do_update()
+    {
+        $user = $this->logIn();
+        $toDo = ToDo::factory()->forUser($user)->create();
+        $category = Category::factory()->forUser(User::factory()->create())->create();
+
+        $this->actingAs($user)->put(route('to-dos.update', $toDo), ToDo::factory()->raw(['category_id' => $category->id]))
+            ->assertSessionHasErrors('category_id');
+    }
+
+    /** @test */
     public function due_date_can_be_null_for_to_do_update()
     {
         $user = $this->logIn();
@@ -342,7 +405,6 @@ class ToDoControllerTest extends TestCase
     /** @test */
     public function verified_user_can_update_to_do()
     {
-        $this->withoutExceptionHandling();
         $user = $this->logIn();
         $data = ToDo::factory()->raw([
             'title' => 'Updated',
@@ -360,6 +422,31 @@ class ToDoControllerTest extends TestCase
             'due_date' => $data['due_date'],
             'user_id' => $user->id,
         ]);
+    }
+
+    /** @test */
+    public function verified_user_can_update_to_do_with_category()
+    {
+        $user = $this->logIn();
+        $category = Category::factory()->forUser($user)->create();
+        $data = ToDo::factory()->raw([
+            'title' => 'Updated',
+            'description' => 'Updated description',
+            'due_date' => Carbon::today()->addDays(2)->toDateTimeString(),
+            'category_id' => $category->id,
+        ]);
+        $toDo = ToDo::factory()->forUser($user)->create();
+
+        $this->actingAs($user)->put(route('to-dos.update', $toDo), $data)
+            ->assertRedirect(route('to-dos.index'));
+
+        $this->assertDatabaseHas('to_dos', [
+            'title' => $data['title'],
+            'description' => $data['description'],
+            'due_date' => $data['due_date'],
+            'user_id' => $user->id,
+        ]);
+        $this->assertEquals($category->id, $toDo->fresh()->category->id);
     }
 
     /**

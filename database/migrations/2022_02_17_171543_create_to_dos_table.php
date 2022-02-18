@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Category;
 use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -21,6 +22,7 @@ return new class extends Migration
             $table->boolean('finished')->default(0);
             $table->dateTime('due_date')->nullable();
             $table->foreignIdFor(User::class);
+            $table->foreignIdFor(Category::class)->nullable()->constrained()->nullOnDelete();
             $table->timestamps();
         });
     }

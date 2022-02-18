@@ -17,6 +17,7 @@ class ToDo extends Model
         'finished',
         'due_date',
         'user_id',
+        'category_id',
     ];
 
     /**
@@ -36,5 +37,10 @@ class ToDo extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(Category::class);
     }
 }

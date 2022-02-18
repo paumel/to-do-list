@@ -3,6 +3,7 @@
 namespace Tests\Feature\Http\Controllers;
 
 use App\Models\Category;
+use App\Models\ToDo;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Str;
@@ -384,5 +385,19 @@ class CategoryControllerTest extends TestCase
             ->assertRedirect(route('categories.index'));
 
         $this->assertModelMissing($category);
+    }
+
+    /** @test */
+    public function category_deletion_unsets_category_from_dependant_to_dos()
+    {
+        $user = $this->logIn();
+        $category = Category::factory()->forUser($user)->create();
+        $toDo = ToDo::factory()->create(['category_id' => $category->id]);
+
+        $this->actingAs($user)->delete(route('categories.destroy', $category))
+            ->assertRedirect(route('categories.index'));
+
+        $this->assertModelMissing($category);
+        $this->assertNull($toDo->fresh()->category_id);
     }
 }

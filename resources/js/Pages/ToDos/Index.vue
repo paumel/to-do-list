@@ -16,8 +16,8 @@
                             <Link :href="route('to-dos.create')" class="rounded border border-gray-300 py-2 px-4 ml-2">Create</Link>
                         </div>
 
-                        <div v-if="to_dos.length < 0">
-                            <p>There are no To Dos</p>
+                        <div v-if="to_dos.length <= 0">
+                            <p>There are no to dos</p>
                         </div>
                         <div v-else v-for="to_do in to_dos" :key="to_do.id">
                             <div class="flex justify-between items-center my-2">
