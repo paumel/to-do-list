@@ -30,6 +30,10 @@ const showingNavigationDropdown = ref(false);
                                 <BreezeNavLink :href="route('to-dos.index')" :active="route().current('to-dos.index')">
                                     To Do list
                                 </BreezeNavLink>
+
+                                <BreezeNavLink :href="route('categories.index')" :active="route().current('categories.index')">
+                                    Categories
+                                </BreezeNavLink>
                             </div>
                         </div>
 
@@ -75,6 +79,10 @@ const showingNavigationDropdown = ref(false);
                     <div class="pt-2 pb-3 space-y-1">
                         <BreezeResponsiveNavLink :href="route('to-dos.index')" :active="route().current('to-dos.index')">
                             To Do list
+                        </BreezeResponsiveNavLink>
+
+                        <BreezeResponsiveNavLink :href="route('categories.index')" :active="route().current('categories.index')">
+                            Categories
                         </BreezeResponsiveNavLink>
                     </div>
 
