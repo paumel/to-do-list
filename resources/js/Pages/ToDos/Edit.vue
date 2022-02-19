@@ -4,7 +4,7 @@
     <BreezeAuthenticatedLayout>
         <template #header>
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                Create new To Do
+                Edit To Do
             </h2>
         </template>
 
@@ -25,7 +25,7 @@
 
                             <div class="mt-4">
                                 <label for="due_date">Due date</label>
-                                <input type="datetime-local" id="due_date" v-model="form.due_date" class="rounded w-full border border-gray-300" />
+                                <Datepicker v-model="form.due_date" class="rounded w-full border border-gray-300" format="yyyy-MM-dd hh:mm" previewFormat="yyyy-MM-dd hh:mm"/>
                             </div>
 
                             <div class="mt-4">
@@ -61,10 +61,13 @@
 </template>
 
 <script setup>
-import { reactive } from 'vue'
+import { reactive, ref } from 'vue'
 import BreezeAuthenticatedLayout from '@/Layouts/Authenticated.vue';
 import { Head } from '@inertiajs/inertia-vue3';
 import {Inertia} from "@inertiajs/inertia";
+import Datepicker from "vue3-date-time-picker";
+import "vue3-date-time-picker/dist/main.css";
+import { format } from "date-fns";
 
 const props = defineProps({
     toDo: Object,
@@ -74,13 +77,18 @@ const props = defineProps({
 const form = reactive({
     title: props.toDo.title,
     description: props.toDo.description,
-    due_date: props.toDo.due_date,
+    due_date: props.toDo.due_date ? ref(new Date(props.toDo.due_date)) : ref(null),
     category_id: props.toDo.category_id,
     tags: props.toDo.tags.map(tag => tag.name),
 })
 
 function submit() {
-    Inertia.put(route('to-dos.update', props.toDo), form)
+    form.due_date = form.due_date ? format(form.due_date, 'yyyy-MM-dd hh:mm:ss') : null
+    Inertia.put(route('to-dos.update', props.toDo), form, {
+        onError: (errors) => {
+            form.due_date = form.due_date ? ref(new Date(form.due_date)) : ref(null)
+        },
+    })
 }
 
 function addTag() {

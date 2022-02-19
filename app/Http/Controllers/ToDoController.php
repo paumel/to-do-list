@@ -69,7 +69,7 @@ class ToDoController extends Controller
         }
 
         return Inertia::render('ToDos/Index', [
-            'to_dos' => $toDosQuery->latest()->get(),
+            'to_dos' => $toDosQuery->orderBy('due_date')->get(),
             'categories' => $categories,
             'tags' => $tags,
             'filters' => $validatedData,

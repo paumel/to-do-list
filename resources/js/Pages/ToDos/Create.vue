@@ -25,7 +25,7 @@
 
                             <div class="mt-4">
                                 <label for="due_date">Due date</label>
-                                <input type="datetime-local" id="due_date" v-model="form.due_date" class="rounded w-full border border-gray-300" />
+                                <Datepicker v-model="form.due_date" class="rounded w-full border border-gray-300" format="yyyy-MM-dd hh:mm" previewFormat="yyyy-MM-dd hh:mm"/>
                             </div>
 
                             <div class="mt-4">
@@ -61,10 +61,13 @@
 </template>
 
 <script setup>
-import { reactive } from 'vue'
+import {reactive, ref} from 'vue'
 import BreezeAuthenticatedLayout from '@/Layouts/Authenticated.vue';
 import { Head } from '@inertiajs/inertia-vue3';
 import {Inertia} from "@inertiajs/inertia";
+import {format} from "date-fns";
+import Datepicker from "vue3-date-time-picker";
+import "vue3-date-time-picker/dist/main.css";
 
 defineProps({
     categories: Array,
@@ -79,7 +82,12 @@ const form = reactive({
 })
 
 function submit() {
-    Inertia.post(route('to-dos.store'), form)
+    form.due_date = form.due_date ? format(form.due_date, 'yyyy-MM-dd hh:mm:ss') : null
+    Inertia.post(route('to-dos.store'), form, {
+        onError: (errors) => {
+            form.due_date = form.due_date ? ref(new Date(form.due_date)) : ref(null)
+        },
+    })
 }
 
 function addTag() {
