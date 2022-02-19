@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Models\Tag;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
@@ -53,9 +54,16 @@ class CategoryController extends Controller
         $validatedData = $request->validate([
             'title' => ['required', 'string', 'max:255', Rule::unique('categories')],
             'max_to_dos' => ['required', 'numeric', 'min:1'],
+            'tags' => ['array', 'min:0'],
+            'tags.*' => ['required', 'string', 'max:255'],
         ]);
 
-        $request->user()->categories()->create($validatedData);
+        $category = $request->user()->categories()->create($validatedData);
+
+        foreach ($validatedData['tags'] as $tag) {
+            $tag = Tag::firstOrCreate(['name' => $tag]);
+            $category->tags()->attach($tag);
+        }
 
         return to_route('categories.index')->with('success', 'Category created successfully');
     }
@@ -83,6 +91,8 @@ class CategoryController extends Controller
         $validatedData = $request->validate([
             'title' => ['required', 'string', 'max:255', Rule::unique('categories')->ignore($category->id)],
             'max_to_dos' => ['required', 'numeric', 'min:1'],
+            'tags' => ['array', 'min:0'],
+            'tags.*' => ['required', 'string', 'max:255'],
         ]);
 
         $category->update($validatedData);

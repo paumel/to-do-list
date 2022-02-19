@@ -173,6 +173,29 @@ class CategoryControllerTest extends TestCase
 
 
     /** @test */
+    public function tags_must_have_name_for_category_creation()
+    {
+        $user = $this->logIn();
+        $data = Category::factory()->raw();
+        $data['tags'] = [''];
+
+        $this->actingAs($user)->post(route('categories.store'), $data)
+            ->assertSessionHasErrors('tags.0');
+    }
+
+    /** @test */
+    public function tags_length_must_be_lower_than_255_for_category_creation()
+    {
+        $user = $this->logIn();
+        $data = Category::factory()->raw();
+        $data['tags'] = [Str::random(256)];
+
+        $this->actingAs($user)->post(route('categories.store'), $data)
+            ->assertSessionHasErrors('tags.0');
+    }
+
+
+    /** @test */
     public function verified_user_can_create_category()
     {
         $user = $this->logIn();
@@ -186,6 +209,30 @@ class CategoryControllerTest extends TestCase
             'max_to_dos' => $data['max_to_dos'],
             'user_id' => $user->id,
         ]);
+    }
+
+    /** @test */
+    public function verified_user_can_create_category_with_tags()
+    {
+        $this->withoutExceptionHandling();
+        $user = $this->logIn();
+        $data = Category::factory()->raw();
+        $data['tags'] = ['tag1', 'tag2'];
+
+        $this->actingAs($user)->post(route('categories.store'), $data)
+            ->assertRedirect(route('categories.index'));
+
+        $this->assertDatabaseHas('categories', [
+            'title' => $data['title'],
+            'max_to_dos' => $data['max_to_dos'],
+            'user_id' => $user->id,
+        ]);
+
+        $this->assertDatabaseHas('tags', ['name' => 'tag1']);
+        $this->assertDatabaseHas('tags', ['name' => 'tag2']);
+
+        $category = Category::firstWhere('title', $data['title']);
+        $this->assertEquals(['tag1', 'tag2'], $category->tags->pluck('name')->toArray());
     }
 
     /**
@@ -320,6 +367,30 @@ class CategoryControllerTest extends TestCase
 
         $this->actingAs($user)->put(route('categories.update', $category), Category::factory()->raw(['max_to_dos' => 0]))
             ->assertSessionHasErrors('max_to_dos');
+    }
+
+    /** @test */
+    public function tags_must_have_value_for_category_update()
+    {
+        $user = $this->logIn();
+        $category = Category::factory()->forUser($user)->create();
+        $data = Category::factory()->raw();
+        $data['tags'] = [''];
+
+        $this->actingAs($user)->put(route('categories.update', $category), $data)
+            ->assertSessionHasErrors('tags.0');
+    }
+
+    /** @test */
+    public function tags_must_lenght_must_be_lower_than_255_for_category_update()
+    {
+        $user = $this->logIn();
+        $category = Category::factory()->forUser($user)->create();
+        $data = Category::factory()->raw();
+        $data['tags'] = [Str::random(256)];
+
+        $this->actingAs($user)->put(route('categories.update', $category), $data)
+            ->assertSessionHasErrors('tags.0');
     }
 
     /** @test */
