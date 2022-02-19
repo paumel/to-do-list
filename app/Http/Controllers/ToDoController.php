@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Models\Tag;
 use App\Models\ToDo;
 use App\Rules\CategoryHasFreeSpaces;
 use Carbon\Carbon;
@@ -63,9 +64,16 @@ class ToDoController extends Controller
             'description' => ['required', 'string'],
             'due_date' => ['nullable', 'date', 'after_or_equal:today'],
             'category_id' => ['nullable', Rule::in($userCategoryIds), new CategoryHasFreeSpaces()],
+            'tags' => ['array', 'min:0'],
+            'tags.*' => ['required', 'string', 'max:255'],
         ]);
 
-        $request->user()->toDos()->create($validatedData);
+        $toDo = $request->user()->toDos()->create($validatedData);
+
+        foreach ($validatedData['tags'] ?? [] as $tag) {
+            $tag = Tag::firstOrCreate(['name' => $tag]);
+            $toDo->tags()->attach($tag);
+        }
 
         return to_route('to-dos.index')->with('success', 'To Do created successfully');
     }
@@ -79,6 +87,8 @@ class ToDoController extends Controller
      */
     public function edit(Request $request, ToDo $toDo): \Inertia\Response
     {
+        $toDo->load(['tags']);
+
         $categories = Category::createdBy($request->user())->orderBy('title')->get();
 
         return Inertia::render('ToDos/Edit', compact('toDo', 'categories'));
@@ -101,9 +111,18 @@ class ToDoController extends Controller
             'description' => ['required', 'string'],
             'due_date' => ['nullable', 'date', 'after_or_equal:' . $minDate],
             'category_id' => ['nullable', Rule::in($userCategoryIds), new CategoryHasFreeSpaces()],
+            'tags' => ['array', 'min:0'],
+            'tags.*' => ['required', 'string', 'max:255'],
         ]);
 
         $toDo->update($validatedData);
+
+        $newTags = [];
+        foreach ($validatedData['tags'] ?? [] as $tag) {
+            $tag = Tag::firstOrCreate(['name' => $tag]);
+            $newTags[] = $tag->id;
+        }
+        $toDo->tags()->sync($newTags);
 
         return to_route('to-dos.index')->with('success', 'To Do updated successfully');
     }

@@ -36,6 +36,16 @@
                                 </select>
                             </div>
 
+                            <div>
+                                <p>Tags</p>
+                                <button @click="addTag">+</button>
+                                <div v-for="(tag, index) in form.tags">
+                                    <input type="text" v-model="form.tags[index]" class="rounded w-1/12 border border-gray-300" />
+                                    <button @click="removeTag(index)">-</button>
+                                </div>
+                            </div>
+
+
                             <div class="flex justify-end">
                                 <button type="submit" class="rounded border border-gray-300 py-2 px-4 mt-4">Submit</button>
                             </div>
@@ -62,10 +72,19 @@ const form = reactive({
     description: null,
     due_date: null,
     category_id: null,
+    tags: [],
 })
 
 function submit() {
     Inertia.post(route('to-dos.store'), form)
+}
+
+function addTag() {
+    form.tags.push('')
+}
+
+function removeTag(index) {
+    form.tags.splice(index, 1)
 }
 
 </script>

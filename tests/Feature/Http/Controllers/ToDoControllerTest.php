@@ -3,6 +3,7 @@
 namespace Tests\Feature\Http\Controllers;
 
 use App\Models\Category;
+use App\Models\Tag;
 use App\Models\ToDo;
 use App\Models\User;
 use Carbon\Carbon;
@@ -204,6 +205,29 @@ class ToDoControllerTest extends TestCase
     }
 
     /** @test */
+    public function tag_must_have_name_for_to_do_creation()
+    {
+        $user = $this->logIn();
+        $data = ToDo::factory()->raw();
+        $data['tags'] = [''];
+
+        $this->actingAs($user)->post(route('to-dos.store'), $data)
+            ->assertSessionHasErrors('tags.0');
+    }
+
+    /** @test */
+    public function tag_must_have_name_shorter_than_256_for_to_do_creation()
+    {
+        $user = $this->logIn();
+        $data = ToDo::factory()->raw();
+        $data['tags'] = [Str::random(256)];
+
+        $this->actingAs($user)->post(route('to-dos.store'), $data)
+            ->assertSessionHasErrors('tags.0');
+    }
+
+
+    /** @test */
     public function verified_user_can_create_to_do()
     {
         $user = $this->logIn();
@@ -223,7 +247,6 @@ class ToDoControllerTest extends TestCase
     /** @test */
     public function verified_user_can_create_to_do_with_category()
     {
-        $this->withoutExceptionHandling();
         $user = $this->logIn();
         $category = Category::factory()->forUser($user)->create();
         $data = ToDo::factory()->raw(['category_id' => $category->id]);
@@ -239,6 +262,30 @@ class ToDoControllerTest extends TestCase
         ]);
 
         $this->assertEquals($category->id, ToDo::firstWhere('title', $data['title'])->category->id);
+    }
+
+    /** @test */
+    public function verified_user_can_create_to_do_with_tags()
+    {
+        $user = $this->logIn();
+        $data = ToDo::factory()->raw();
+        $data['tags'] = ['tag1', 'tag2'];
+
+        $this->actingAs($user)->post(route('to-dos.store'), $data)
+            ->assertRedirect(route('to-dos.index'));
+
+        $this->assertDatabaseHas('to_dos', [
+            'title' => $data['title'],
+            'description' => $data['description'],
+            'due_date' => $data['due_date'],
+            'user_id' => $user->id,
+        ]);
+
+        $this->assertDatabaseHas('tags', ['name' => 'tag1']);
+        $this->assertDatabaseHas('tags', ['name' => 'tag2']);
+
+        $toDo = ToDo::firstWhere('title', $data['title']);
+        $this->assertEquals(['tag1', 'tag2'], $toDo->tags->pluck('name')->toArray());
     }
 
     /**
@@ -427,6 +474,30 @@ class ToDoControllerTest extends TestCase
     }
 
     /** @test */
+    public function tag_must_have_name_for_to_do_update()
+    {
+        $user = $this->logIn();
+        $toDo = ToDo::factory()->forUser($user)->create();
+        $data = ToDo::factory()->raw();
+        $data['tags'] = [''];
+
+        $this->actingAs($user)->put(route('to-dos.update', $toDo), $data)
+            ->assertSessionHasErrors('tags.0');
+    }
+
+    /** @test */
+    public function tag_must_be_shorter_than_256_for_to_do_update()
+    {
+        $user = $this->logIn();
+        $toDo = ToDo::factory()->forUser($user)->create();
+        $data = ToDo::factory()->raw();
+        $data['tags'] = [Str::random(256)];
+
+        $this->actingAs($user)->put(route('to-dos.update', $toDo), $data)
+            ->assertSessionHasErrors('tags.0');
+    }
+
+    /** @test */
     public function verified_user_can_update_to_do()
     {
         $user = $this->logIn();
@@ -471,6 +542,35 @@ class ToDoControllerTest extends TestCase
             'user_id' => $user->id,
         ]);
         $this->assertEquals($category->id, $toDo->fresh()->category->id);
+    }
+
+    /** @test */
+    public function verified_user_can_update_to_do_with_tags()
+    {
+        $user = $this->logIn();
+        $data = ToDo::factory()->raw([
+            'title' => 'Updated',
+            'description' => 'Updated description',
+            'due_date' => Carbon::today()->addDays(2)->toDateTimeString()
+        ]);
+        $data['tags'] = ['tag1', 'tag2'];
+        $toDo = ToDo::factory()->forUser($user)->create();
+        $toDo->tags()->attach(Tag::firstOrCreate(['name' => 'oldtag1']));
+
+        $this->actingAs($user)->put(route('to-dos.update', $toDo), $data)
+            ->assertRedirect(route('to-dos.index'));
+
+        $this->assertDatabaseHas('to_dos', [
+            'title' => $data['title'],
+            'description' => $data['description'],
+            'due_date' => $data['due_date'],
+            'user_id' => $user->id,
+        ]);
+
+        $this->assertDatabaseHas('tags', ['name' => 'tag1']);
+        $this->assertDatabaseHas('tags', ['name' => 'tag2']);
+
+        $this->assertEquals(['tag1', 'tag2'], $toDo->fresh()->tags->pluck('name')->toArray());
     }
 
     /**

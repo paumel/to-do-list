@@ -60,7 +60,7 @@ class CategoryController extends Controller
 
         $category = $request->user()->categories()->create($validatedData);
 
-        foreach ($validatedData['tags'] as $tag) {
+        foreach ($validatedData['tags'] ?? [] as $tag) {
             $tag = Tag::firstOrCreate(['name' => $tag]);
             $category->tags()->attach($tag);
         }
@@ -100,7 +100,7 @@ class CategoryController extends Controller
         $category->update($validatedData);
 
         $newTags = [];
-        foreach ($validatedData['tags'] as $tag) {
+        foreach ($validatedData['tags'] ?? [] as $tag) {
             $tag = Tag::firstOrCreate(['name' => $tag]);
             $newTags[] = $tag->id;
         }
