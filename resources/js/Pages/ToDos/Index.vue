@@ -11,7 +11,7 @@
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6 bg-white border-b border-gray-200">
+                    <div class="p-6 bg-white border-b border-gray-200 min-h-screen">
                         <div class="flex justify-between">
                             <div>
                                 <p class="font-semibold">Filters</p>
@@ -38,14 +38,14 @@
                                             <option value="1">Finished</option>
                                         </select>
                                     </div>
-<!--                                    <div>-->
-<!--                                        <p>Start date</p>-->
-<!--                                        <datepicker v-model="queryFilters.start_date" class="rounded" @change="filter" />-->
-<!--                                    </div>-->
-<!--                                    <div>-->
-<!--                                        <p>End date</p>-->
-<!--                                        <datepicker v-model="queryFilters.end_date" class="rounded" @change="filter" />-->
-<!--                                    </div>-->
+                                    <div>
+                                        <p>Start date</p>
+                                        <datepicker v-model="start_date" class="rounded" inputFormat="yyyy-MM-dd" clearable />
+                                    </div>
+                                    <div>
+                                        <p>End date</p>
+                                        <datepicker v-model="end_date" class="rounded" inputFormat="yyyy-MM-dd" clearable />
+                                    </div>
                                 </div>
                             </div>
 
@@ -101,8 +101,9 @@
 import BreezeAuthenticatedLayout from '@/Layouts/Authenticated.vue';
 import { Head, Link } from '@inertiajs/inertia-vue3';
 import {Inertia} from "@inertiajs/inertia";
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import Datepicker from 'vue3-datepicker'
+import { format } from 'date-fns'
 
 const props = defineProps({
     to_dos: Array,
@@ -115,9 +116,10 @@ const queryFilters = {
     category_id: props.filters.category_id,
     tag_id: props.filters.tag_id,
     finished: props.filters.finished,
-    start_date: props.filters.start_date,
-    end_date: props.filters.end_date,
 }
+
+const start_date = props.filters.start_date ? ref(new Date(props.filters.start_date)) : ref(null)
+const end_date = props.filters.end_date ? ref(new Date(props.filters.end_date)) : ref(null)
 
 function deleteToDo(toDo) {
     Inertia.delete(route('to-dos.destroy', toDo))
@@ -128,6 +130,12 @@ function toggleFinished(toDo) {
 }
 
 function filter() {
+    if (start_date && start_date.value) {
+        queryFilters.start_date = format(start_date.value, 'yyyy-MM-dd')
+    }
+    if (end_date && end_date.value) {
+        queryFilters.end_date = format(end_date.value, 'yyyy-MM-dd')
+    }
     Inertia.get(route('to-dos.index', clean(queryFilters)))
 }
 
@@ -139,5 +147,14 @@ function clean(obj) {
     }
     return obj
 }
+
+watch(start_date, async (newDate, oldDate) => {
+    filter(clean(queryFilters))
+})
+
+watch(end_date, async (newDate, oldDate) => {
+    filter(clean(queryFilters))
+})
+
 
 </script>
