@@ -12,8 +12,46 @@
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                     <div class="p-6 bg-white border-b border-gray-200">
-                        <div class="flex justify-end mb-6">
-                            <Link :href="route('to-dos.create')" class="rounded border border-gray-300 py-2 px-4 ml-2">Create</Link>
+                        <div class="flex justify-between">
+                            <div>
+                                <p class="font-semibold">Filters</p>
+                                <div class="flex flex-wrap space-x-1 mt-2">
+                                    <div>
+                                        <p>Category</p>
+                                        <select name="" id="" class="rounded" v-model="queryFilters.category_id" @change="filter">
+                                            <option value=""></option>
+                                            <option v-for="category in categories" :key="category.id" :value="category.id">{{ category.title }}</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <p>Tag</p>
+                                        <select name="" id="" class="rounded" v-model="queryFilters.tag_id" @change="filter">
+                                            <option value=""></option>
+                                            <option v-for="tag in tags" :key="tag.id" :value="tag.id">{{ tag.name }}</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <p>Status</p>
+                                        <select name="" id="" class="rounded" v-model="queryFilters.finished" @change="filter">
+                                            <option value=""></option>
+                                            <option value="0">Active</option>
+                                            <option value="1">Finished</option>
+                                        </select>
+                                    </div>
+<!--                                    <div>-->
+<!--                                        <p>Start date</p>-->
+<!--                                        <datepicker v-model="queryFilters.start_date" class="rounded" @change="filter" />-->
+<!--                                    </div>-->
+<!--                                    <div>-->
+<!--                                        <p>End date</p>-->
+<!--                                        <datepicker v-model="queryFilters.end_date" class="rounded" @change="filter" />-->
+<!--                                    </div>-->
+                                </div>
+                            </div>
+
+                            <div>
+                                <Link :href="route('to-dos.create')" class="rounded border border-gray-300 py-2 px-4 ml-2">Create</Link>
+                            </div>
                         </div>
 
                         <div v-if="to_dos.length <= 0">
@@ -63,10 +101,23 @@
 import BreezeAuthenticatedLayout from '@/Layouts/Authenticated.vue';
 import { Head, Link } from '@inertiajs/inertia-vue3';
 import {Inertia} from "@inertiajs/inertia";
+import { ref } from 'vue'
+import Datepicker from 'vue3-datepicker'
 
-defineProps({
+const props = defineProps({
     to_dos: Array,
+    categories: Array,
+    tags: Array,
+    filters: Array
 })
+
+const queryFilters = {
+    category_id: props.filters.category_id,
+    tag_id: props.filters.tag_id,
+    finished: props.filters.finished,
+    start_date: props.filters.start_date,
+    end_date: props.filters.end_date,
+}
 
 function deleteToDo(toDo) {
     Inertia.delete(route('to-dos.destroy', toDo))
@@ -74,6 +125,19 @@ function deleteToDo(toDo) {
 
 function toggleFinished(toDo) {
     Inertia.put(route('to-dos.toggle', toDo))
+}
+
+function filter() {
+    Inertia.get(route('to-dos.index', clean(queryFilters)))
+}
+
+function clean(obj) {
+    for (var propName in obj) {
+        if (obj[propName] === null || obj[propName] === undefined || obj[propName] === '') {
+            delete obj[propName];
+        }
+    }
+    return obj
 }
 
 </script>

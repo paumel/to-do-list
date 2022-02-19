@@ -12,8 +12,24 @@
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                     <div class="p-6 bg-white border-b border-gray-200">
-                        <div class="flex justify-end mb-6">
-                            <Link :href="route('categories.create')" class="rounded border border-gray-300 py-2 px-4 ml-2">Create</Link>
+
+                        <div class="flex justify-between">
+                            <div>
+                                <p class="font-semibold">Filters</p>
+                                <div class="flex flex-wrap space-x-1 mt-2">
+                                    <div>
+                                        <p>Tag</p>
+                                        <select name="" id="" class="rounded" v-model="queryFilters.tag_id" @change="filter">
+                                            <option value=""></option>
+                                            <option v-for="tag in tags" :key="tag.id" :value="tag.id">{{ tag.name }}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <Link :href="route('categories.create')" class="rounded border border-gray-300 py-2 px-4 ml-2">Create</Link>
+                            </div>
                         </div>
 
                         <div v-if="categories.length < 0">
@@ -49,12 +65,32 @@ import BreezeAuthenticatedLayout from '@/Layouts/Authenticated.vue';
 import { Head, Link } from '@inertiajs/inertia-vue3';
 import {Inertia} from "@inertiajs/inertia";
 
-defineProps({
+const props = defineProps({
     categories: Array,
+    tags: Array,
+    filters: Array
 })
+
+const queryFilters = {
+    tag_id: props.filters.tag_id,
+}
 
 function deleteCategory(category) {
     Inertia.delete(route('categories.destroy', category))
+}
+
+function filter() {
+    console.log(clean(queryFilters))
+    Inertia.get(route('categories.index', clean(queryFilters)))
+}
+
+function clean(obj) {
+    for (var propName in obj) {
+        if (obj[propName] === null || obj[propName] === undefined || obj[propName] === '') {
+            delete obj[propName];
+        }
+    }
+    return obj
 }
 
 </script>

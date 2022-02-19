@@ -31,26 +31,28 @@ class ToDoController extends Controller
      */
     public function index(Request $request): \Inertia\Response
     {
-        $request->validate([
-            'category' => ['nullable', Rule::exists('categories', 'title')],
-            'tags' => ['nullable', 'array', 'min:1'],
-            'tags.*' => [Rule::exists('tags', 'name')],
+        $validatedData = $request->validate([
+            'category_id' => ['nullable', Rule::exists('categories', 'id')],
+            'tag_id' => ['nullable', Rule::exists('tags', 'id')],
             'finished' => ['nullable', 'boolean'],
             'start_date' => ['nullable', 'date'],
             'end_date' => ['nullable', 'date'],
         ]);
 
+        $categories = Category::whereHas('toDos')->createdBy($request->user())->orderBy('title')->get();
+        $tags = Tag::whereHas('toDos')->createdBy($request->user())->orderBy('name')->get();
+
         $toDosQuery = ToDo::with(['category', 'tags'])->createdBy($request->user());
 
-        if ($request->has('tags')) {
+        if ($request->has('tag_id')) {
             $toDosQuery->whereHas('tags', function ($query) use ($request) {
-                $query->whereIn('name', $request->get('tags'));
+                $query->where('tags.id', $request->get('tag_id'));
             });
         }
 
-        if ($request->has('category')) {
+        if ($request->has('category_id')) {
             $toDosQuery->whereHas('category', function ($query) use ($request) {
-                $query->where('title', $request->get('category'));
+                $query->where('categories.id', $request->get('category_id'));
             });
         }
 
@@ -68,6 +70,9 @@ class ToDoController extends Controller
 
         return Inertia::render('ToDos/Index', [
             'to_dos' => $toDosQuery->latest()->get(),
+            'categories' => $categories,
+            'tags' => $tags,
+            'filters' => $validatedData,
         ]);
     }
 
@@ -106,7 +111,10 @@ class ToDoController extends Controller
         $toDo = $request->user()->toDos()->create($validatedData);
 
         foreach ($validatedData['tags'] ?? [] as $tag) {
-            $tag = Tag::firstOrCreate(['name' => $tag]);
+            $tag = Tag::firstOrCreate([
+                'name' => $tag,
+                'user_id' => $request->user()->id
+            ]);
             $toDo->tags()->attach($tag);
         }
 
@@ -154,7 +162,10 @@ class ToDoController extends Controller
 
         $newTags = [];
         foreach ($validatedData['tags'] ?? [] as $tag) {
-            $tag = Tag::firstOrCreate(['name' => $tag]);
+            $tag = Tag::firstOrCreate([
+                'name' => $tag,
+                'user_id' => $request->user()->id
+            ]);
             $newTags[] = $tag->id;
         }
         $toDo->tags()->sync($newTags);

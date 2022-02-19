@@ -53,7 +53,7 @@ class CategoryControllerTest extends TestCase
     {
         $user = $this->logIn();
         $category = Category::factory()->create();
-        $category->tags()->attach(Tag::firstOrCreate(['name' => 'tag']));
+        $category->tags()->attach(Tag::factory()->create(['name' => 'tag']));
 
         $this->actingAs($user)->get(route('categories.index', ['tags' => ['tag']]))
             ->assertSuccessful()
@@ -438,7 +438,7 @@ class CategoryControllerTest extends TestCase
         ]);
         $data['tags'] = ['tag1', 'tag2'];
         $category = Category::factory()->forUser($user)->create();
-        $category->tags()->attach(Tag::firstOrCreate(['name' => 'oldtag1']));
+        $category->tags()->attach(Tag::factory()->create(['name' => 'oldtag1']));
 
         $this->actingAs($user)->put(route('categories.update', $category), $data)
             ->assertRedirect(route('categories.index'));

@@ -54,7 +54,7 @@ class ToDoControllerTest extends TestCase
     {
         $user = $this->logIn();
         $toDo = ToDo::factory()->forCategory(Category::factory()->create(['title' => 'category']))->create();
-        $toDo->tags()->attach(Tag::firstOrCreate(['name' => 'tag']));
+        $toDo->tags()->attach(Tag::factory()->create(['name' => 'tag']));
 
         $this->actingAs($user)->get(route('to-dos.index', [
             'tags' => ['tag'],
@@ -575,7 +575,7 @@ class ToDoControllerTest extends TestCase
         ]);
         $data['tags'] = ['tag1', 'tag2'];
         $toDo = ToDo::factory()->forUser($user)->create();
-        $toDo->tags()->attach(Tag::firstOrCreate(['name' => 'oldtag1']));
+        $toDo->tags()->attach(Tag::factory()->create(['name' => 'oldtag1']));
 
         $this->actingAs($user)->put(route('to-dos.update', $toDo), $data)
             ->assertRedirect(route('to-dos.index'));

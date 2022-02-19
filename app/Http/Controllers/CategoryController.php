@@ -28,21 +28,23 @@ class CategoryController extends Controller
      */
     public function index(Request $request): \Inertia\Response
     {
-        $request->validate([
-            'tags' => ['nullable', 'array', 'min:1'],
-            'tags.*' => [Rule::exists('tags', 'name')],
+        $validatedData = $request->validate([
+            'tag_id' => ['nullable', Rule::exists('tags', 'id')],
         ]);
 
         $categoriesQuery = Category::with(['tags'])->createdBy($request->user());
+        $tags = Tag::whereHas('categories')->createdBy($request->user())->orderBy('name')->get();
 
-        if ($request->has('tags')) {
+        if ($request->has('tag_id')) {
             $categoriesQuery->whereHas('tags', function ($query) use ($request) {
-                $query->whereIn('name', $request->get('tags'));
+                $query->where('tags.id', $request->get('tag_id'));
             });
         }
 
         return Inertia::render('Categories/Index', [
+            'tags' => $tags,
             'categories' => $categoriesQuery->orderBy('title')->get(),
+            'filters' => $validatedData,
         ]);
     }
 
@@ -65,7 +67,7 @@ class CategoryController extends Controller
     public function store(Request $request): \Illuminate\Http\RedirectResponse
     {
         $validatedData = $request->validate([
-            'title' => ['required', 'string', 'max:255', Rule::unique('categories')],
+            'title' => ['required', 'string', 'max:255'],
             'max_to_dos' => ['required', 'numeric', 'min:1'],
             'tags' => ['array', 'min:0'],
             'tags.*' => ['required', 'string', 'max:255'],
@@ -74,7 +76,10 @@ class CategoryController extends Controller
         $category = $request->user()->categories()->create($validatedData);
 
         foreach ($validatedData['tags'] ?? [] as $tag) {
-            $tag = Tag::firstOrCreate(['name' => $tag]);
+            $tag = Tag::firstOrCreate([
+                'name' => $tag,
+                'user_id' => $request->user()->id
+            ]);
             $category->tags()->attach($tag);
         }
 
@@ -104,7 +109,7 @@ class CategoryController extends Controller
     public function update(Request $request, Category $category): \Illuminate\Http\RedirectResponse
     {
         $validatedData = $request->validate([
-            'title' => ['required', 'string', 'max:255', Rule::unique('categories')->ignore($category->id)],
+            'title' => ['required', 'string', 'max:255'],
             'max_to_dos' => ['required', 'numeric', 'min:1'],
             'tags' => ['array', 'min:0'],
             'tags.*' => ['required', 'string', 'max:255'],
@@ -114,7 +119,10 @@ class CategoryController extends Controller
 
         $newTags = [];
         foreach ($validatedData['tags'] ?? [] as $tag) {
-            $tag = Tag::firstOrCreate(['name' => $tag]);
+            $tag = Tag::firstOrCreate([
+                'name' => $tag,
+                'user_id' => $request->user()->id
+            ]);
             $newTags[] = $tag->id;
         }
         $category->tags()->sync($newTags);

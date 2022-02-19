@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
@@ -12,6 +13,7 @@ class Tag extends Model
 
     protected $fillable = [
         'name',
+        'user_id'
     ];
 
     public function categories(): MorphToMany
@@ -22,5 +24,10 @@ class Tag extends Model
     public function toDos(): MorphToMany
     {
         return $this->morphedByMany(ToDo::class, 'taggable');
+    }
+
+    public function scopeCreatedBy(Builder $query, User $user): Builder
+    {
+        return $query->where('user_id', $user->id);
     }
 }
