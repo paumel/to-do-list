@@ -32,7 +32,7 @@ class ToDoController extends Controller
     public function index(Request $request): \Inertia\Response
     {
         return Inertia::render('ToDos/Index', [
-            'to_dos' => ToDo::createdBy($request->user())->latest()->get(),
+            'to_dos' => ToDo::with(['tags', 'category'])->createdBy($request->user())->latest()->get(),
         ]);
     }
 

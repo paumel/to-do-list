@@ -20,18 +20,37 @@
                             <p>There are no to dos</p>
                         </div>
                         <div v-else v-for="to_do in to_dos" :key="to_do.id">
-                            <div class="flex justify-between items-center my-2">
+                            <div class="flex justify-between items-center my-2 bg-gray-200 rounded p-2" v-bind:class="{ 'opacity-50': to_do.finished }">
                                 <div class="flex items-center">
                                     <input type="checkbox" class="mr-2" :checked="to_do.finished" @change="toggleFinished(to_do)">
-                                    <Link :href="route('to-dos.edit', to_do)">{{to_do.title}}</Link>
+                                    <div>
+                                        <p class="font-bold">{{to_do.title}}</p>
+                                        <p>{{to_do.description}}</p>
+
+                                        <div class="flex justify-start space-x-8">
+                                            <div class="flex justify-start items-center" v-if="to_do.category">
+                                                <p class="text-xs font-semibold">Due date: </p>
+                                                <p  class="text-xs ml-2">{{to_do.due_date}}</p>
+                                            </div>
+                                            <div class="flex justify-start items-center" v-if="to_do.category">
+                                                <p class="text-xs font-semibold">Category: </p>
+                                                <p  class="text-xs ml-2">{{to_do.category.title}}</p>
+                                            </div>
+                                            <div class="flex justify-start items-center" v-if="to_do.tags.length > 0">
+                                                <p class="text-xs font-semibold">Tags: </p>
+                                                <p v-for="tag in to_do.tags" :key="tag.id" class="text-sm ml-2">{{tag.name}}</p>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="flex">
-                                    <Link :href="route('to-dos.edit', to_do)" class="rounded border border-gray-300 py-2 px-4 ml-2">Edit</Link>
+                                <div class="flex 1">
+                                    <Link :href="route('to-dos.edit', to_do)" class="rounded border border-gray-300 py-2 px-4 ml-2 bg-white">Edit</Link>
                                     <form @submit.prevent="deleteToDo(to_do)">
-                                        <button type="submit" class="rounded border border-gray-300 py-2 px-4 ml-2">Delete</button>
+                                        <button type="submit" class="rounded border border-gray-300 py-2 px-4 ml-2 bg-white ">Delete</button>
                                     </form>
                                 </div>
                             </div>
+
                         </div>
                     </div>
                 </div>

@@ -20,17 +20,22 @@
                             <p>There are no Categories</p>
                         </div>
                         <div v-else v-for="category in categories" :key="category.id">
-                            <div class="flex justify-between items-center my-2">
-                                <div class="flex items-center">
-                                    <Link :href="route('categories.edit', category)">{{category.title}}</Link>
+                            <div class="flex justify-between items-center my-2 bg-gray-200 rounded p-2">
+                                <div class="flex-row items-center">
+                                    <p class="font-bold">{{category.title}}</p>
+                                    <div class="flex justify-start items-center">
+                                        <p class="text-xs font-semibold">Tags: </p>
+                                        <p v-for="tag in category.tags" :key="tag.id" class="text-sm ml-2">{{tag.name}}</p>
+                                    </div>
                                 </div>
                                 <div class="flex">
-                                    <Link :href="route('categories.edit', category)" class="rounded border border-gray-300 py-2 px-4 ml-2">Edit</Link>
+                                    <Link :href="route('categories.edit', category)" class="rounded border border-gray-300 py-2 px-4 ml-2  bg-white">Edit</Link>
                                     <form @submit.prevent="deleteCategory(category)">
-                                        <button type="submit" class="rounded border border-gray-300 py-2 px-4 ml-2">Delete</button>
+                                        <button type="submit" class="rounded border border-gray-300 py-2 px-4 ml-2 bg-white">Delete</button>
                                     </form>
                                 </div>
                             </div>
+
                         </div>
                     </div>
                 </div>

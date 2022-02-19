@@ -25,7 +25,7 @@ Route::get('/', function () {
         'laravelVersion' => Application::VERSION,
         'phpVersion' => PHP_VERSION,
     ]);
-});
+})->middleware(['guest']);
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('to-dos', ToDoController::class)->except(['show']);

@@ -29,7 +29,7 @@ class CategoryController extends Controller
     public function index(Request $request): \Inertia\Response
     {
         return Inertia::render('Categories/Index', [
-            'categories' => Category::createdBy($request->user())->orderBy('title')->get(),
+            'categories' => Category::with(['tags'])->createdBy($request->user())->orderBy('title')->get(),
         ]);
     }
 
