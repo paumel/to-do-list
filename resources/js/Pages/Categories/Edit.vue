@@ -23,6 +23,15 @@
                                 <input id="max_to_dos" type="number" v-model="form.max_to_dos" class="rounded w-full border border-gray-300" />
                             </div>
 
+                            <div>
+                                <p>Tags</p>
+                                <button @click="addTag" type="button">+</button>
+                                <div v-for="(tag, index) in form.tags">
+                                    <input type="text" v-model="form.tags[index]" class="rounded w-1/12 border border-gray-300" />
+                                    <button @click="removeTag(index)" type="button">-</button>
+                                </div>
+                            </div>
+
                             <div class="flex justify-end">
                                 <button type="submit" class="rounded border border-gray-300 py-2 px-4 mt-4">Submit</button>
                             </div>
@@ -47,10 +56,19 @@ const props = defineProps({
 const form = reactive({
     title: props.category.title,
     max_to_dos: props.category.max_to_dos,
+    tags: props.category.tags.map(tag => tag.name),
 })
 
 function submit() {
     Inertia.put(route('categories.update', props.category), form)
+}
+
+function addTag() {
+    form.tags.push('')
+}
+
+function removeTag(index) {
+    form.tags.splice(index, 1)
 }
 
 </script>

@@ -76,6 +76,8 @@ class CategoryController extends Controller
      */
     public function edit(Category $category): \Inertia\Response
     {
+        $category->load(['tags']);
+
         return Inertia::render('Categories/Edit', compact('category'));
     }
 
@@ -96,6 +98,14 @@ class CategoryController extends Controller
         ]);
 
         $category->update($validatedData);
+
+        $newTags = [];
+        foreach ($validatedData['tags'] as $tag) {
+            $tag = Tag::firstOrCreate(['name' => $tag]);
+            $newTags[] = $tag->id;
+        }
+        $category->tags()->sync($newTags);
+
 
         return to_route('categories.index')->with('success', 'Category updated successfully');
     }

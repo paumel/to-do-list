@@ -3,6 +3,7 @@
 namespace Tests\Feature\Http\Controllers;
 
 use App\Models\Category;
+use App\Models\Tag;
 use App\Models\ToDo;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -214,7 +215,6 @@ class CategoryControllerTest extends TestCase
     /** @test */
     public function verified_user_can_create_category_with_tags()
     {
-        $this->withoutExceptionHandling();
         $user = $this->logIn();
         $data = Category::factory()->raw();
         $data['tags'] = ['tag1', 'tag2'];
@@ -411,6 +411,33 @@ class CategoryControllerTest extends TestCase
             'max_to_dos' => $data['max_to_dos'],
             'user_id' => $user->id,
         ]);
+    }
+
+    /** @test */
+    public function verified_user_can_update_category_tags()
+    {
+        $user = $this->logIn();
+        $data = Category::factory()->raw([
+            'title' => 'Updated',
+            'max_to_dos' => 9,
+        ]);
+        $data['tags'] = ['tag1', 'tag2'];
+        $category = Category::factory()->forUser($user)->create();
+        $category->tags()->attach(Tag::firstOrCreate(['name' => 'oldtag1']));
+
+        $this->actingAs($user)->put(route('categories.update', $category), $data)
+            ->assertRedirect(route('categories.index'));
+
+        $this->assertDatabaseHas('categories', [
+            'title' => $data['title'],
+            'max_to_dos' => $data['max_to_dos'],
+            'user_id' => $user->id,
+        ]);
+
+        $this->assertDatabaseHas('tags', ['name' => 'tag1']);
+        $this->assertDatabaseHas('tags', ['name' => 'tag2']);
+
+        $this->assertEquals(['tag1', 'tag2'], $category->fresh()->tags->pluck('name')->toArray());
     }
 
     /**

@@ -22391,17 +22391,30 @@ __webpack_require__.r(__webpack_exports__);
     var props = __props;
     var form = (0,vue__WEBPACK_IMPORTED_MODULE_0__.reactive)({
       title: props.category.title,
-      max_to_dos: props.category.max_to_dos
+      max_to_dos: props.category.max_to_dos,
+      tags: props.category.tags.map(function (tag) {
+        return tag.name;
+      })
     });
 
     function submit() {
       _inertiajs_inertia__WEBPACK_IMPORTED_MODULE_3__.Inertia.put(route('categories.update', props.category), form);
     }
 
+    function addTag() {
+      form.tags.push('');
+    }
+
+    function removeTag(index) {
+      form.tags.splice(index, 1);
+    }
+
     var __returned__ = {
       props: props,
       form: form,
       submit: submit,
+      addTag: addTag,
+      removeTag: removeTag,
       reactive: vue__WEBPACK_IMPORTED_MODULE_0__.reactive,
       BreezeAuthenticatedLayout: _Layouts_Authenticated_vue__WEBPACK_IMPORTED_MODULE_1__["default"],
       Head: _inertiajs_inertia_vue3__WEBPACK_IMPORTED_MODULE_2__.Head,
@@ -24079,7 +24092,14 @@ var _hoisted_8 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementV
 /* HOISTED */
 );
 
-var _hoisted_9 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+var _hoisted_9 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", null, "Tags", -1
+/* HOISTED */
+);
+
+var _hoisted_10 = ["onUpdate:modelValue"];
+var _hoisted_11 = ["onClick"];
+
+var _hoisted_12 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
   "class": "flex justify-end"
 }, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
   type: "submit",
@@ -24115,7 +24135,29 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
         "class": "rounded w-full border border-gray-300"
       }, null, 512
       /* NEED_PATCH */
-      ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $setup.form.max_to_dos]])]), _hoisted_9], 40
+      ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $setup.form.max_to_dos]])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, [_hoisted_9, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
+        onClick: $setup.addTag,
+        type: "button"
+      }, "+"), ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($setup.form.tags, function (tag, index) {
+        return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+          type: "text",
+          "onUpdate:modelValue": function onUpdateModelValue($event) {
+            return $setup.form.tags[index] = $event;
+          },
+          "class": "rounded w-1/12 border border-gray-300"
+        }, null, 8
+        /* PROPS */
+        , _hoisted_10), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $setup.form.tags[index]]]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
+          onClick: function onClick($event) {
+            return $setup.removeTag(index);
+          },
+          type: "button"
+        }, "-", 8
+        /* PROPS */
+        , _hoisted_11)]);
+      }), 256
+      /* UNKEYED_FRAGMENT */
+      ))]), _hoisted_12], 40
       /* PROPS, HYDRATE_EVENTS */
       , _hoisted_6)])])])])];
     }),
