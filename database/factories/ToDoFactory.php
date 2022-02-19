@@ -36,4 +36,13 @@ class ToDoFactory extends Factory
             ];
         });
     }
+
+    public function forCategory(Category $category): ToDoFactory
+    {
+        return $this->state(function (array $attributes) use ($category) {
+            return [
+                'category_id' => $category->id,
+            ];
+        });
+    }
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\ToDo;
+use App\Rules\CategoryHasFreeSpaces;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -61,7 +62,7 @@ class ToDoController extends Controller
             'title' => ['required', 'string', 'max:255'],
             'description' => ['required', 'string'],
             'due_date' => ['nullable', 'date', 'after_or_equal:today'],
-            'category_id' => ['nullable', Rule::in($userCategoryIds)],
+            'category_id' => ['nullable', Rule::in($userCategoryIds), new CategoryHasFreeSpaces()],
         ]);
 
         $request->user()->toDos()->create($validatedData);
@@ -99,7 +100,7 @@ class ToDoController extends Controller
             'title' => ['required', 'string', 'max:255'],
             'description' => ['required', 'string'],
             'due_date' => ['nullable', 'date', 'after_or_equal:' . $minDate],
-            'category_id' => ['nullable', Rule::in($userCategoryIds)],
+            'category_id' => ['nullable', Rule::in($userCategoryIds), new CategoryHasFreeSpaces()],
         ]);
 
         $toDo->update($validatedData);

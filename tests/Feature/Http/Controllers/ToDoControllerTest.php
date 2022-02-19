@@ -165,6 +165,17 @@ class ToDoControllerTest extends TestCase
     }
 
     /** @test */
+    public function category_must_have_free_spaces_for_creation()
+    {
+        $user = $this->logIn();
+        $category = Category::factory()->forUser($user)->create(['max_to_dos' => 2]);
+        ToDo::factory(2)->forCategory($category)->create();
+
+        $this->actingAs($user)->post(route('to-dos.store'), ToDo::factory()->raw(['category_id' => $category->id]))
+            ->assertSessionHasErrors('category_id');
+    }
+
+    /** @test */
     public function due_date_can_be_null_for_to_do_creation()
     {
         $user = $this->logIn();
@@ -349,6 +360,19 @@ class ToDoControllerTest extends TestCase
         $user = $this->logIn();
         $toDo = ToDo::factory()->forUser($user)->create();
         $category = Category::factory()->forUser(User::factory()->create())->create();
+
+        $this->actingAs($user)->put(route('to-dos.update', $toDo), ToDo::factory()->raw(['category_id' => $category->id]))
+            ->assertSessionHasErrors('category_id');
+    }
+
+    /** @test */
+    public function category_must_have_free_spaces_for_to_do_update()
+    {
+        $user = $this->logIn();
+        $toDo = ToDo::factory()->forUser($user)->create();
+        $category = Category::factory()->forUser($user)->create(['max_to_dos' => 2]);
+        ToDo::factory(2)->forCategory($category)->create();
+
 
         $this->actingAs($user)->put(route('to-dos.update', $toDo), ToDo::factory()->raw(['category_id' => $category->id]))
             ->assertSessionHasErrors('category_id');
