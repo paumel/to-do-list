@@ -151,16 +151,6 @@ class CategoryControllerTest extends TestCase
     }
 
     /** @test */
-    public function title_must_be_unique_for_category_creation()
-    {
-        $user = $this->logIn();
-        $category = Category::factory()->create();
-
-        $this->actingAs($user)->post(route('categories.store'), Category::factory()->raw(['title' => $category->title]))
-            ->assertSessionHasErrors('title');
-    }
-
-    /** @test */
     public function max_to_dos_is_required_for_category_creation()
     {
         $user = $this->logIn();
@@ -340,17 +330,6 @@ class CategoryControllerTest extends TestCase
         $category = Category::factory()->forUser($user)->create();
 
         $this->actingAs($user)->put(route('categories.update', $category), Category::factory()->raw(['title' => Str::random(256)]))
-            ->assertSessionHasErrors('title');
-    }
-
-    /** @test */
-    public function title_must_be_unique_for_category_update()
-    {
-        $user = $this->logIn();
-        $category = Category::factory()->forUser($user)->create();
-        $otherCategory = Category::factory()->create();
-
-        $this->actingAs($user)->put(route('categories.update', $category), Category::factory()->raw(['title' => $otherCategory->title]))
             ->assertSessionHasErrors('title');
     }
 
