@@ -50,6 +50,26 @@ class ToDoControllerTest extends TestCase
     }
 
     /** @test */
+    public function verified_user_can_see_to_do_list_with_filters()
+    {
+        $user = $this->logIn();
+        $toDo = ToDo::factory()->forCategory(Category::factory()->create(['title' => 'category']))->create();
+        $toDo->tags()->attach(Tag::firstOrCreate(['name' => 'tag']));
+
+        $this->actingAs($user)->get(route('to-dos.index', [
+            'tags' => ['tag'],
+            'category' => 'category',
+            'finished' => 1,
+            'start_date' => Carbon::today()->toDateString(),
+            'end_date' => Carbon::tomorrow()->toDateString(),
+        ]))->assertSuccessful()
+            ->assertInertia(fn(Assert $page) => $page
+                ->component('ToDos/Index')
+                ->has('to_dos')
+            );
+    }
+
+    /** @test */
     public function user_can_see_only_his_to_dos()
     {
         $user = $this->logIn();

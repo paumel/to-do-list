@@ -49,6 +49,21 @@ class CategoryControllerTest extends TestCase
     }
 
     /** @test */
+    public function verified_user_can_see_category_list_filtered()
+    {
+        $user = $this->logIn();
+        $category = Category::factory()->create();
+        $category->tags()->attach(Tag::firstOrCreate(['name' => 'tag']));
+
+        $this->actingAs($user)->get(route('categories.index', ['tags' => ['tag']]))
+            ->assertSuccessful()
+            ->assertInertia(fn(Assert $page) => $page
+                ->component('Categories/Index')
+                ->has('categories')
+            );
+    }
+
+    /** @test */
     public function user_can_see_only_his_categories()
     {
         $user = $this->logIn();

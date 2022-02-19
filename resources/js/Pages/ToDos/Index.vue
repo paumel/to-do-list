@@ -28,7 +28,7 @@
                                         <p>{{to_do.description}}</p>
 
                                         <div class="flex justify-start space-x-8">
-                                            <div class="flex justify-start items-center" v-if="to_do.category">
+                                            <div class="flex justify-start items-center" v-if="to_do.due_date">
                                                 <p class="text-xs font-semibold">Due date: </p>
                                                 <p  class="text-xs ml-2">{{to_do.due_date}}</p>
                                             </div>

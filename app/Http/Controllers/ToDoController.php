@@ -31,8 +31,43 @@ class ToDoController extends Controller
      */
     public function index(Request $request): \Inertia\Response
     {
+        $request->validate([
+            'category' => ['nullable', Rule::exists('categories', 'title')],
+            'tags' => ['nullable', 'array', 'min:1'],
+            'tags.*' => [Rule::exists('tags', 'name')],
+            'finished' => ['nullable', 'boolean'],
+            'start_date' => ['nullable', 'date'],
+            'end_date' => ['nullable', 'date'],
+        ]);
+
+        $toDosQuery = ToDo::with(['category', 'tags'])->createdBy($request->user());
+
+        if ($request->has('tags')) {
+            $toDosQuery->whereHas('tags', function ($query) use ($request) {
+                $query->whereIn('name', $request->get('tags'));
+            });
+        }
+
+        if ($request->has('category')) {
+            $toDosQuery->whereHas('category', function ($query) use ($request) {
+                $query->where('title', $request->get('category'));
+            });
+        }
+
+        if ($request->has('finished')) {
+            $toDosQuery->where('finished', $request->get('finished'));
+        }
+
+        if ($request->has('start_date')) {
+            $toDosQuery->whereDate('due_date', '>=' ,$request->get('start_date'))->whereNotNull('due_date');
+        }
+
+        if ($request->has('end_date')) {
+            $toDosQuery->whereDate('due_date', '<=' ,$request->get('end_date'))->whereNotNull('due_date');
+        }
+
         return Inertia::render('ToDos/Index', [
-            'to_dos' => ToDo::with(['tags', 'category'])->createdBy($request->user())->latest()->get(),
+            'to_dos' => $toDosQuery->latest()->get(),
         ]);
     }
 

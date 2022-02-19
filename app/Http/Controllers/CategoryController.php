@@ -28,8 +28,21 @@ class CategoryController extends Controller
      */
     public function index(Request $request): \Inertia\Response
     {
+        $request->validate([
+            'tags' => ['nullable', 'array', 'min:1'],
+            'tags.*' => [Rule::exists('tags', 'name')],
+        ]);
+
+        $categoriesQuery = Category::with(['tags'])->createdBy($request->user());
+
+        if ($request->has('tags')) {
+            $categoriesQuery->whereHas('tags', function ($query) use ($request) {
+                $query->whereIn('name', $request->get('tags'));
+            });
+        }
+
         return Inertia::render('Categories/Index', [
-            'categories' => Category::with(['tags'])->createdBy($request->user())->orderBy('title')->get(),
+            'categories' => $categoriesQuery->orderBy('title')->get(),
         ]);
     }
 
