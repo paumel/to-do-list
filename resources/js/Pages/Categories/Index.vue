@@ -36,10 +36,10 @@
                             <p>There are no Categories</p>
                         </div>
                         <div v-else v-for="category in categories" :key="category.id">
-                            <div class="flex justify-between items-center my-2 bg-gray-200 rounded p-2">
+                            <div class="flex flex-wrap justify-between items-center my-2 bg-gray-200 rounded p-2">
                                 <div class="flex-row items-center">
                                     <p class="font-bold">{{category.title}}</p>
-                                    <div class="flex justify-start items-center">
+                                    <div class="flex flex-wrap justify-start items-center">
                                         <p class="text-xs font-semibold">Tags: </p>
                                         <button v-for="tag in category.tags" :key="tag.id" class="text-sm ml-2 underline" @click="filterByTag(tag)">{{tag.name}}</button>
                                     </div>

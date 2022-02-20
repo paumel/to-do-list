@@ -58,14 +58,14 @@
                             <p>There are no to dos</p>
                         </div>
                         <div v-else v-for="to_do in to_dos" :key="to_do.id">
-                            <div class="flex justify-between items-center my-2 bg-gray-200 rounded p-2" v-bind:class="{ 'opacity-50': to_do.finished }">
+                            <div class="flex flex-wrap justify-between items-center my-2 bg-gray-200 rounded p-2" v-bind:class="{ 'opacity-50': to_do.finished }">
                                 <div class="flex items-center">
                                     <input type="checkbox" class="mr-2 border-transparent focus:border-transparent focus:ring-0 focus:outline-hidden" :checked="to_do.finished" @change="toggleFinished(to_do)">
                                     <div>
                                         <p class="font-bold">{{to_do.title}}</p>
                                         <p>{{to_do.description}}</p>
 
-                                        <div class="flex justify-start space-x-8">
+                                        <div class="flex flex-wrap justify-start space-x-8">
                                             <div class="flex justify-start items-center" v-if="to_do.due_date">
                                                 <p class="text-xs font-semibold">Due date: </p>
                                                 <p  class="text-xs ml-2">{{to_do.due_date}}</p>
