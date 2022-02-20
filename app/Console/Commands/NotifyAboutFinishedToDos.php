@@ -40,14 +40,13 @@ class NotifyAboutFinishedToDos extends Command
      */
     public function handle()
     {
-        $finishedToDos = ToDo::with(['user'])
-            ->whereDate('due_date', Carbon::yesterday())
-            ->where('finished', false)
-            ->get();
-
-        $finishedToDos->groupBy('user_id')->each(function ($toDos) {
-            $toDos->first()->user->notify(new FinishedToDosNotification($toDos));
-        });
+        ToDo::with(['user'])
+            ->expiredOnDate(Carbon::yesterday())
+            ->get()
+            ->groupBy('user_id')
+            ->each(function ($toDos) {
+                $toDos->first()->user->notify(new FinishedToDosNotification($toDos));
+            });
 
         return 0;
     }

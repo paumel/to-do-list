@@ -20,11 +20,6 @@ class Category extends Model
         'user_id',
     ];
 
-    public function scopeCreatedBy(Builder $query, User $user): Builder
-    {
-        return $query->where('user_id', $user->id);
-    }
-
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
@@ -50,5 +45,40 @@ class Category extends Model
         return new Attribute(
             get: fn($value) => $this->max_to_dos - $this->toDos()->count(),
         );
+    }
+
+    public function scopeCreatedBy(Builder $query, User $user): Builder
+    {
+        return $query->where('user_id', $user->id);
+    }
+
+    public function scopeFilter(Builder $query, array $filters): Builder
+    {
+        if (isset($filters['tag_id'])) {
+            $query->hasTagId($filters['tag_id']);
+        }
+        return $query;
+    }
+
+    public function scopeHasTagId(Builder $query, $tag_id): Builder
+    {
+        return $query->whereHas('tags', function ($query) use ($tag_id) {
+            $query->where('tags.id', $tag_id);
+        });
+    }
+
+    public function attachTags(array $tags, $userId): void
+    {
+        $newTags = [];
+
+        foreach ($tags ?? [] as $tag) {
+            $tag = Tag::firstOrCreate([
+                'name' => $tag,
+                'user_id' => $userId,
+            ]);
+            $newTags[] = $tag->id;
+        }
+
+        $this->tags()->sync($newTags);
     }
 }

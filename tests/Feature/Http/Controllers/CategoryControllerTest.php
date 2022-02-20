@@ -51,6 +51,7 @@ class CategoryControllerTest extends TestCase
     /** @test */
     public function verified_user_can_see_category_list_filtered()
     {
+        $this->withoutExceptionHandling();
         $user = $this->logIn();
         $category = Category::factory()->create();
         $category->tags()->attach($tag = Tag::factory()->create(['name' => 'tag']));

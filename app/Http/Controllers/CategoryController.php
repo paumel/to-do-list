@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CategoryRequest;
 use App\Models\Category;
 use App\Models\Tag;
 use Illuminate\Http\Request;
@@ -28,24 +29,18 @@ class CategoryController extends Controller
      */
     public function index(Request $request): \Inertia\Response
     {
-        $validatedData = $request->validate([
+        $filters = $request->validate([
             'tag_id' => ['nullable', Rule::exists('tags', 'id')],
         ]);
 
-        $categoriesQuery = Category::with(['tags'])->createdBy($request->user());
+        $categories = Category::with(['tags'])->createdBy($request->user())->filter($filters)->orderBy('title')->get();
+
         $tags = Tag::whereHas('categories')->createdBy($request->user())->orderBy('name')->get();
 
-        if ($request->has('tag_id')) {
-            $categoriesQuery->whereHas('tags', function ($query) use ($request) {
-                $query->where('tags.id', $request->get('tag_id'));
-            });
-        }
-
-        return Inertia::render('Categories/Index', [
-            'tags' => $tags,
-            'categories' => $categoriesQuery->orderBy('title')->get(),
-            'filters' => $validatedData,
-        ]);
+        return Inertia::render(
+            'Categories/Index',
+            compact('categories', 'tags', 'filters')
+        );
     }
 
     /**
@@ -61,27 +56,16 @@ class CategoryController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param \App\Http\Requests\CategoryRequest $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(Request $request): \Illuminate\Http\RedirectResponse
+    public function store(CategoryRequest $request): \Illuminate\Http\RedirectResponse
     {
-        $validatedData = $request->validate([
-            'title' => ['required', 'string', 'max:255'],
-            'max_to_dos' => ['required', 'numeric', 'min:1'],
-            'tags' => ['array', 'min:0'],
-            'tags.*' => ['required', 'string', 'max:255'],
-        ]);
+        $validatedData = $request->validated();
 
         $category = $request->user()->categories()->create($validatedData);
 
-        foreach ($validatedData['tags'] ?? [] as $tag) {
-            $tag = Tag::firstOrCreate([
-                'name' => $tag,
-                'user_id' => $request->user()->id
-            ]);
-            $category->tags()->attach($tag);
-        }
+        $category->attachTags($validatedData['tags'] ?? [], $request->user()->id);
 
         return to_route('categories.index')->with('success', 'Category created successfully');
     }
@@ -102,31 +86,17 @@ class CategoryController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param \App\Http\Requests\CategoryRequest $request
      * @param \App\Models\Category $category
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function update(Request $request, Category $category): \Illuminate\Http\RedirectResponse
+    public function update(CategoryRequest $request, Category $category): \Illuminate\Http\RedirectResponse
     {
-        $validatedData = $request->validate([
-            'title' => ['required', 'string', 'max:255'],
-            'max_to_dos' => ['required', 'numeric', 'min:1'],
-            'tags' => ['array', 'min:0'],
-            'tags.*' => ['required', 'string', 'max:255'],
-        ]);
+        $validatedData = $request->validated();
 
         $category->update($validatedData);
 
-        $newTags = [];
-        foreach ($validatedData['tags'] ?? [] as $tag) {
-            $tag = Tag::firstOrCreate([
-                'name' => $tag,
-                'user_id' => $request->user()->id
-            ]);
-            $newTags[] = $tag->id;
-        }
-        $category->tags()->sync($newTags);
-
+        $category->attachTags($validatedData['tags'] ?? [], $request->user()->id);
 
         return to_route('categories.index')->with('success', 'Category updated successfully');
     }
