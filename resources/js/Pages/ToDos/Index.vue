@@ -10,8 +10,8 @@
 
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6 bg-white border-b border-gray-200 min-h-screen">
+                <div class="bg-white shadow-sm sm:rounded-lg">
+                    <div class="p-6 bg-white border-b border-gray-200 h-auto">
                         <div class="flex justify-between">
                             <div>
                                 <p class="font-semibold">Filters</p>
@@ -60,7 +60,7 @@
                         <div v-else v-for="to_do in to_dos" :key="to_do.id">
                             <div class="flex justify-between items-center my-2 bg-gray-200 rounded p-2" v-bind:class="{ 'opacity-50': to_do.finished }">
                                 <div class="flex items-center">
-                                    <input type="checkbox" class="mr-2" :checked="to_do.finished" @change="toggleFinished(to_do)">
+                                    <input type="checkbox" class="mr-2 border-transparent focus:border-transparent focus:ring-0 focus:outline-hidden" :checked="to_do.finished" @change="toggleFinished(to_do)">
                                     <div>
                                         <p class="font-bold">{{to_do.title}}</p>
                                         <p>{{to_do.description}}</p>
@@ -72,11 +72,11 @@
                                             </div>
                                             <div class="flex justify-start items-center" v-if="to_do.category">
                                                 <p class="text-xs font-semibold">Category: </p>
-                                                <p  class="text-xs ml-2">{{to_do.category.title}}</p>
+                                                <button  class="text-xs ml-2 underline" @click="filterByCategory(to_do.category)">{{to_do.category.title}}</button>
                                             </div>
                                             <div class="flex justify-start items-center" v-if="to_do.tags.length > 0">
                                                 <p class="text-xs font-semibold">Tags: </p>
-                                                <p v-for="tag in to_do.tags" :key="tag.id" class="text-sm ml-2">{{tag.name}}</p>
+                                                <button v-for="tag in to_do.tags" :key="tag.id" class="text-sm ml-2 underline" @click="filterByTag(tag)">{{tag.name}}</button>
                                             </div>
                                         </div>
                                     </div>
@@ -128,7 +128,7 @@ function deleteToDo(toDo) {
 }
 
 function toggleFinished(toDo) {
-    Inertia.put(route('to-dos.toggle', toDo))
+    Inertia.put(route('to-dos.toggle', toDo), clean(queryFilters),{ preserveScroll: true })
 }
 
 function filter() {
@@ -139,6 +139,16 @@ function filter() {
         queryFilters.end_date = format(end_date.value, 'yyyy-MM-dd')
     }
     Inertia.get(route('to-dos.index', clean(queryFilters)))
+}
+
+function filterByTag(tag) {
+    queryFilters.tag_id = tag.id
+    filter()
+}
+
+function filterByCategory(category) {
+    queryFilters.category_id = category.id
+    filter()
 }
 
 function clean(obj) {

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\ToDo;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class ToggleToDoFinishedController extends Controller
 {
@@ -18,8 +19,16 @@ class ToggleToDoFinishedController extends Controller
     {
         abort_if($request->user()->cannot('update', $toDo), 403);
 
+        $validatedData = $request->validate([
+            'category_id' => ['nullable', Rule::exists('categories', 'id')],
+            'tag_id' => ['nullable', Rule::exists('tags', 'id')],
+            'finished' => ['nullable', 'boolean'],
+            'start_date' => ['nullable', 'date'],
+            'end_date' => ['nullable', 'date'],
+        ]);
+
         $toDo->update(['finished' => !$toDo->finished]);
 
-        return to_route('to-dos.index');
+        return back();
     }
 }

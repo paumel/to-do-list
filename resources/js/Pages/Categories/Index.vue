@@ -11,7 +11,7 @@
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6 bg-white border-b border-gray-200">
+                    <div class="p-6 bg-white border-b border-gray-200 h-auto">
 
                         <div class="flex justify-between">
                             <div>
@@ -41,7 +41,7 @@
                                     <p class="font-bold">{{category.title}}</p>
                                     <div class="flex justify-start items-center">
                                         <p class="text-xs font-semibold">Tags: </p>
-                                        <p v-for="tag in category.tags" :key="tag.id" class="text-sm ml-2">{{tag.name}}</p>
+                                        <button v-for="tag in category.tags" :key="tag.id" class="text-sm ml-2 underline" @click="filterByTag(tag)">{{tag.name}}</button>
                                     </div>
                                 </div>
                                 <div class="flex">
@@ -82,8 +82,12 @@ function deleteCategory(category) {
 }
 
 function filter() {
-    console.log(clean(queryFilters))
     Inertia.get(route('categories.index', clean(queryFilters)))
+}
+
+function filterByTag(tag) {
+    queryFilters.tag_id = tag.id
+    filter()
 }
 
 function clean(obj) {

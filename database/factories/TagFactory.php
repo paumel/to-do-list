@@ -18,7 +18,7 @@ class TagFactory extends Factory
     public function definition()
     {
         return [
-            'name' => $this->faker->word(),
+            'name' => $this->faker->unique()->lexify('????'),
             'user_id' => fn() => User::factory()->create(),
         ];
     }
