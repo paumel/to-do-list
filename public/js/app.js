@@ -22477,7 +22477,9 @@ __webpack_require__.r(__webpack_exports__);
     };
 
     function deleteCategory(category) {
-      _inertiajs_inertia__WEBPACK_IMPORTED_MODULE_2__.Inertia["delete"](route('categories.destroy', category));
+      if (confirm('Do you really want to delete this category?')) {
+        _inertiajs_inertia__WEBPACK_IMPORTED_MODULE_2__.Inertia["delete"](route('categories.destroy', category));
+      }
     }
 
     function filter() {
@@ -22734,7 +22736,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     var end_date = props.filters.end_date ? (0,vue__WEBPACK_IMPORTED_MODULE_4__.ref)(new Date(props.filters.end_date)) : (0,vue__WEBPACK_IMPORTED_MODULE_4__.ref)(null);
 
     function deleteToDo(toDo) {
-      _inertiajs_inertia__WEBPACK_IMPORTED_MODULE_3__.Inertia["delete"](route('to-dos.destroy', toDo));
+      if (confirm('Do you really want to delete this to do?')) {
+        _inertiajs_inertia__WEBPACK_IMPORTED_MODULE_3__.Inertia["delete"](route('to-dos.destroy', toDo));
+      }
     }
 
     function toggleFinished(toDo) {

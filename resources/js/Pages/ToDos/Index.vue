@@ -122,7 +122,9 @@ const start_date = props.filters.start_date ? ref(new Date(props.filters.start_d
 const end_date = props.filters.end_date ? ref(new Date(props.filters.end_date)) : ref(null)
 
 function deleteToDo(toDo) {
-    Inertia.delete(route('to-dos.destroy', toDo))
+    if(confirm('Do you really want to delete this to do?')) {
+        Inertia.delete(route('to-dos.destroy', toDo))
+    }
 }
 
 function toggleFinished(toDo) {

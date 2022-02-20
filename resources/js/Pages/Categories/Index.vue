@@ -76,7 +76,9 @@ const queryFilters = {
 }
 
 function deleteCategory(category) {
-    Inertia.delete(route('categories.destroy', category))
+    if(confirm('Do you really want to delete this category?')) {
+        Inertia.delete(route('categories.destroy', category))
+    }
 }
 
 function filter() {
