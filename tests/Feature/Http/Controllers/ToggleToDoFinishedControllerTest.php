@@ -23,7 +23,7 @@ class ToggleToDoFinishedControllerTest extends TestCase
     /** @test */
     public function not_verified_user_cant_toggle_to_do_finished_field()
     {
-        $user = User::factory()->create(['email_verified_at' => null]);
+        $user = User::factory()->unverified()->create();
         $toDo = ToDo::factory()->forUser($user)->create();
 
         $this->actingAs($user)->put(route('to-dos.toggle', $toDo))
@@ -47,12 +47,12 @@ class ToggleToDoFinishedControllerTest extends TestCase
         $toDo = ToDo::factory()->forUser($user)->create(['finished' => false]);
 
         $this->actingAs($user)->put(route('to-dos.toggle', $toDo))
-            ->assertRedirect(route('to-dos.index'));
+            ->assertRedirect();
 
         $this->assertEquals(true, $toDo->fresh()->finished);
 
         $this->actingAs($user)->put(route('to-dos.toggle', $toDo))
-            ->assertRedirect(route('to-dos.index'));
+            ->assertRedirect();
 
         $this->assertEquals(false, $toDo->fresh()->finished);
     }

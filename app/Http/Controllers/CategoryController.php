@@ -139,6 +139,8 @@ class CategoryController extends Controller
      */
     public function destroy(Category $category): \Illuminate\Http\RedirectResponse
     {
+        $category->tags()->detach();
+
         $category->delete();
 
         return to_route('categories.index')->with('success', 'Category deleted successfully');

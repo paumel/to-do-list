@@ -30,7 +30,7 @@ class ToDoControllerTest extends TestCase
     /** @test */
     public function not_verified_user_cant_see_to_do_list()
     {
-        $user = User::factory()->create(['email_verified_at' => null]);
+        $user = User::factory()->unverified()->create();
 
         $this->actingAs($user)->get(route('to-dos.index'))
             ->assertRedirect(route('verification.notice'));
@@ -53,12 +53,12 @@ class ToDoControllerTest extends TestCase
     public function verified_user_can_see_to_do_list_with_filters()
     {
         $user = $this->logIn();
-        $toDo = ToDo::factory()->forCategory(Category::factory()->create(['title' => 'category']))->create();
-        $toDo->tags()->attach(Tag::factory()->create(['name' => 'tag']));
+        $toDo = ToDo::factory()->forCategory($category = Category::factory()->create(['title' => 'category']))->create();
+        $toDo->tags()->attach($tag = Tag::factory()->create(['name' => 'tag']));
 
         $this->actingAs($user)->get(route('to-dos.index', [
-            'tags' => ['tag'],
-            'category' => 'category',
+            'tag_id' => $tag->id,
+            'category_id' => $category->id,
             'finished' => 1,
             'start_date' => Carbon::today()->toDateString(),
             'end_date' => Carbon::tomorrow()->toDateString(),
@@ -100,7 +100,7 @@ class ToDoControllerTest extends TestCase
     /** @test */
     public function not_verified_user_cant_see_to_do_create_view()
     {
-        $user = User::factory()->create(['email_verified_at' => null]);
+        $user = User::factory()->unverified()->create();
 
         $this->actingAs($user)->get(route('to-dos.create'))
             ->assertRedirect(route('verification.notice'));
@@ -133,7 +133,7 @@ class ToDoControllerTest extends TestCase
     /** @test */
     public function not_verified_user_cant_create_to_do()
     {
-        $user = User::factory()->create(['email_verified_at' => null]);
+        $user = User::factory()->unverified()->create();
 
         $this->actingAs($user)->post(route('to-dos.store'), ToDo::factory()->raw())
             ->assertRedirect(route('verification.notice'));
@@ -144,7 +144,8 @@ class ToDoControllerTest extends TestCase
     {
         $user = $this->logIn();
 
-        $this->actingAs($user)->post(route('to-dos.store'), ToDo::factory()->raw(['title' => null]))
+        $this->actingAs($user)
+            ->post(route('to-dos.store'), ToDo::factory()->raw(['title' => null]))
             ->assertSessionHasErrors('title');
     }
 
@@ -153,7 +154,8 @@ class ToDoControllerTest extends TestCase
     {
         $user = $this->logIn();
 
-        $this->actingAs($user)->post(route('to-dos.store'), ToDo::factory()->raw(['title' => Str::random(256)]))
+        $this->actingAs($user)
+            ->post(route('to-dos.store'), ToDo::factory()->raw(['title' => Str::random(256)]))
             ->assertSessionHasErrors('title');
     }
 
@@ -162,7 +164,8 @@ class ToDoControllerTest extends TestCase
     {
         $user = $this->logIn();
 
-        $this->actingAs($user)->post(route('to-dos.store'), ToDo::factory()->raw(['description' => null]))
+        $this->actingAs($user)
+            ->post(route('to-dos.store'), ToDo::factory()->raw(['description' => null]))
             ->assertSessionHasErrors('description');
     }
 
@@ -171,7 +174,8 @@ class ToDoControllerTest extends TestCase
     {
         $user = $this->logIn();
 
-        $this->actingAs($user)->post(route('to-dos.store'), ToDo::factory()->raw(['category_id' => 2]))
+        $this->actingAs($user)
+            ->post(route('to-dos.store'), ToDo::factory()->raw(['category_id' => 2]))
             ->assertSessionHasErrors('category_id');
     }
 
@@ -181,7 +185,8 @@ class ToDoControllerTest extends TestCase
         $user = $this->logIn();
         $category = Category::factory()->forUser(User::factory()->create())->create();
 
-        $this->actingAs($user)->post(route('to-dos.store'), ToDo::factory()->raw(['category_id' => $category->id]))
+        $this->actingAs($user)
+            ->post(route('to-dos.store'), ToDo::factory()->raw(['category_id' => $category->id]))
             ->assertSessionHasErrors('category_id');
     }
 
@@ -192,7 +197,8 @@ class ToDoControllerTest extends TestCase
         $category = Category::factory()->forUser($user)->create(['max_to_dos' => 2]);
         ToDo::factory(2)->forCategory($category)->create();
 
-        $this->actingAs($user)->post(route('to-dos.store'), ToDo::factory()->raw(['category_id' => $category->id]))
+        $this->actingAs($user)
+            ->post(route('to-dos.store'), ToDo::factory()->raw(['category_id' => $category->id]))
             ->assertSessionHasErrors('category_id');
     }
 
@@ -201,7 +207,8 @@ class ToDoControllerTest extends TestCase
     {
         $user = $this->logIn();
 
-        $this->actingAs($user)->post(route('to-dos.store'), ToDo::factory()->raw(['due_date' => null]))
+        $this->actingAs($user)
+            ->post(route('to-dos.store'), ToDo::factory()->raw(['due_date' => null]))
             ->assertSessionDoesntHaveErrors('due_date');
     }
 
@@ -324,7 +331,7 @@ class ToDoControllerTest extends TestCase
     /** @test */
     public function not_verified_user_cant_see_to_do_edit_view()
     {
-        $user = User::factory()->create(['email_verified_at' => null]);
+        $user = User::factory()->unverified()->create();
         $toDo = ToDo::factory()->forUser($user)->create();
 
         $this->actingAs($user)->get(route('to-dos.edit', $toDo))
@@ -374,10 +381,11 @@ class ToDoControllerTest extends TestCase
     /** @test */
     public function not_verified_user_cant_update_to_do()
     {
-        $user = User::factory()->create(['email_verified_at' => null]);
+        $user = User::factory()->unverified()->create();
         $toDo = ToDo::factory()->forUser($user)->create();
 
-        $this->actingAs($user)->put(route('to-dos.update', $toDo), ToDo::factory()->raw())
+        $this->actingAs($user)
+            ->put(route('to-dos.update', $toDo), ToDo::factory()->raw())
             ->assertRedirect(route('verification.notice'));
     }
 
@@ -387,7 +395,8 @@ class ToDoControllerTest extends TestCase
         $user = $this->logIn();
         $toDo = ToDo::factory()->forUser($user)->create();
 
-        $this->actingAs($user)->put(route('to-dos.update', $toDo), ToDo::factory()->raw(['title' => null]))
+        $this->actingAs($user)
+            ->put(route('to-dos.update', $toDo), ToDo::factory()->raw(['title' => null]))
             ->assertSessionHasErrors('title');
     }
 
@@ -397,7 +406,8 @@ class ToDoControllerTest extends TestCase
         $user = $this->logIn();
         $toDo = ToDo::factory()->forUser($user)->create();
 
-        $this->actingAs($user)->put(route('to-dos.update', $toDo), ToDo::factory()->raw(['title' => Str::random(256)]))
+        $this->actingAs($user)
+            ->put(route('to-dos.update', $toDo), ToDo::factory()->raw(['title' => Str::random(256)]))
             ->assertSessionHasErrors('title');
     }
 
@@ -407,7 +417,8 @@ class ToDoControllerTest extends TestCase
         $user = $this->logIn();
         $toDo = ToDo::factory()->forUser($user)->create();
 
-        $this->actingAs($user)->put(route('to-dos.update', $toDo), ToDo::factory()->raw(['description' => null]))
+        $this->actingAs($user)
+            ->put(route('to-dos.update', $toDo), ToDo::factory()->raw(['description' => null]))
             ->assertSessionHasErrors('description');
     }
 
@@ -417,7 +428,8 @@ class ToDoControllerTest extends TestCase
         $user = $this->logIn();
         $toDo = ToDo::factory()->forUser($user)->create();
 
-        $this->actingAs($user)->put(route('to-dos.update', $toDo), ToDo::factory()->raw(['category_id' => 12]))
+        $this->actingAs($user)
+            ->put(route('to-dos.update', $toDo), ToDo::factory()->raw(['category_id' => 12]))
             ->assertSessionHasErrors('category_id');
     }
 
@@ -428,7 +440,8 @@ class ToDoControllerTest extends TestCase
         $toDo = ToDo::factory()->forUser($user)->create();
         $category = Category::factory()->forUser(User::factory()->create())->create();
 
-        $this->actingAs($user)->put(route('to-dos.update', $toDo), ToDo::factory()->raw(['category_id' => $category->id]))
+        $this->actingAs($user)
+            ->put(route('to-dos.update', $toDo), ToDo::factory()->raw(['category_id' => $category->id]))
             ->assertSessionHasErrors('category_id');
     }
 
@@ -440,8 +453,8 @@ class ToDoControllerTest extends TestCase
         $category = Category::factory()->forUser($user)->create(['max_to_dos' => 2]);
         ToDo::factory(2)->forCategory($category)->create();
 
-
-        $this->actingAs($user)->put(route('to-dos.update', $toDo), ToDo::factory()->raw(['category_id' => $category->id]))
+        $this->actingAs($user)
+            ->put(route('to-dos.update', $toDo), ToDo::factory()->raw(['category_id' => $category->id]))
             ->assertSessionHasErrors('category_id');
     }
 
@@ -451,7 +464,8 @@ class ToDoControllerTest extends TestCase
         $user = $this->logIn();
         $toDo = ToDo::factory()->forUser($user)->create();
 
-        $this->actingAs($user)->put(route('to-dos.update', $toDo), ToDo::factory()->raw(['due_date' => null]))
+        $this->actingAs($user)
+            ->put(route('to-dos.update', $toDo), ToDo::factory()->raw(['due_date' => null]))
             ->assertSessionDoesntHaveErrors('due_date');
     }
 
@@ -471,7 +485,7 @@ class ToDoControllerTest extends TestCase
     {
         $user = $this->logIn();
         $toDo = ToDo::factory()->forUser($user)->create([
-            'due_date' => Carbon::today()->subDays(2)->toDateTimeString()
+            'due_date' => Carbon::today()->subDays(2)->toDateTimeString(),
         ]);
 
         $this->actingAs($user)->put(route('to-dos.update', $toDo), ToDo::factory()->raw([
@@ -489,7 +503,8 @@ class ToDoControllerTest extends TestCase
         $user = $this->logIn();
         $toDo = ToDo::factory()->forUser($user)->create();
 
-        $this->actingAs($user)->put(route('to-dos.update', $toDo), ToDo::factory()->raw(['due_date' => 'not date']))
+        $this->actingAs($user)
+            ->put(route('to-dos.update', $toDo), ToDo::factory()->raw(['due_date' => 'not date']))
             ->assertSessionHasErrors('due_date');
     }
 
@@ -524,7 +539,7 @@ class ToDoControllerTest extends TestCase
         $data = ToDo::factory()->raw([
             'title' => 'Updated',
             'description' => 'Updated description',
-            'due_date' => Carbon::today()->addDays(2)->toDateTimeString()
+            'due_date' => Carbon::today()->addDays(2)->toDateTimeString(),
         ]);
         $toDo = ToDo::factory()->forUser($user)->create();
 
@@ -571,7 +586,7 @@ class ToDoControllerTest extends TestCase
         $data = ToDo::factory()->raw([
             'title' => 'Updated',
             'description' => 'Updated description',
-            'due_date' => Carbon::today()->addDays(2)->toDateTimeString()
+            'due_date' => Carbon::today()->addDays(2)->toDateTimeString(),
         ]);
         $data['tags'] = ['tag1', 'tag2'];
         $toDo = ToDo::factory()->forUser($user)->create();
@@ -609,7 +624,7 @@ class ToDoControllerTest extends TestCase
     /** @test */
     public function not_verified_user_cant_delete_to_do()
     {
-        $user = User::factory()->create(['email_verified_at' => null]);
+        $user = User::factory()->unverified()->create();
         $toDo = ToDo::factory()->forUser($user)->create();
 
         $this->actingAs($user)->delete(route('to-dos.destroy', $toDo))

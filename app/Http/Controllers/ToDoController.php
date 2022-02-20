@@ -181,6 +181,8 @@ class ToDoController extends Controller
      */
     public function destroy(ToDo $toDo): \Illuminate\Http\RedirectResponse
     {
+        $toDo->tags()->detach();
+
         $toDo->delete();
 
         return to_route('to-dos.index')->with('success', 'To Do deleted successfully');

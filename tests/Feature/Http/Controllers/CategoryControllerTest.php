@@ -29,7 +29,7 @@ class CategoryControllerTest extends TestCase
     /** @test */
     public function not_verified_user_cant_see_category_list()
     {
-        $user = User::factory()->create(['email_verified_at' => null]);
+        $user = User::factory()->unverified()->create();
 
         $this->actingAs($user)->get(route('categories.index'))
             ->assertRedirect(route('verification.notice'));
@@ -53,9 +53,9 @@ class CategoryControllerTest extends TestCase
     {
         $user = $this->logIn();
         $category = Category::factory()->create();
-        $category->tags()->attach(Tag::factory()->create(['name' => 'tag']));
+        $category->tags()->attach($tag = Tag::factory()->create(['name' => 'tag']));
 
-        $this->actingAs($user)->get(route('categories.index', ['tags' => ['tag']]))
+        $this->actingAs($user)->get(route('categories.index', ['tag_id' => $tag->id]))
             ->assertSuccessful()
             ->assertInertia(fn(Assert $page) => $page
                 ->component('Categories/Index')
@@ -94,7 +94,7 @@ class CategoryControllerTest extends TestCase
     /** @test */
     public function not_verified_user_cant_see_category_create_view()
     {
-        $user = User::factory()->create(['email_verified_at' => null]);
+        $user = User::factory()->unverified()->create();
 
         $this->actingAs($user)->get(route('categories.create'))
             ->assertRedirect(route('verification.notice'));
@@ -126,7 +126,7 @@ class CategoryControllerTest extends TestCase
     /** @test */
     public function not_verified_user_cant_create_category()
     {
-        $user = User::factory()->create(['email_verified_at' => null]);
+        $user = User::factory()->unverified()->create();
 
         $this->actingAs($user)->post(route('categories.store'), Category::factory()->raw())
             ->assertRedirect(route('verification.notice'));
@@ -146,7 +146,8 @@ class CategoryControllerTest extends TestCase
     {
         $user = $this->logIn();
 
-        $this->actingAs($user)->post(route('categories.store'), Category::factory()->raw(['title' => Str::random(256)]))
+        $this->actingAs($user)
+            ->post(route('categories.store'), Category::factory()->raw(['title' => Str::random(256)]))
             ->assertSessionHasErrors('title');
     }
 
@@ -155,7 +156,8 @@ class CategoryControllerTest extends TestCase
     {
         $user = $this->logIn();
 
-        $this->actingAs($user)->post(route('categories.store'), Category::factory()->raw(['max_to_dos' => null]))
+        $this->actingAs($user)
+            ->post(route('categories.store'), Category::factory()->raw(['max_to_dos' => null]))
             ->assertSessionHasErrors('max_to_dos');
     }
 
@@ -164,7 +166,8 @@ class CategoryControllerTest extends TestCase
     {
         $user = $this->logIn();
 
-        $this->actingAs($user)->post(route('categories.store'), Category::factory()->raw(['max_to_dos' => 'not number']))
+        $this->actingAs($user)
+            ->post(route('categories.store'), Category::factory()->raw(['max_to_dos' => 'not number']))
             ->assertSessionHasErrors('max_to_dos');
     }
 
@@ -173,7 +176,8 @@ class CategoryControllerTest extends TestCase
     {
         $user = $this->logIn();
 
-        $this->actingAs($user)->post(route('categories.store'), Category::factory()->raw(['max_to_dos' => 0]))
+        $this->actingAs($user)
+            ->post(route('categories.store'), Category::factory()->raw(['max_to_dos' => 0]))
             ->assertSessionHasErrors('max_to_dos');
     }
 
@@ -256,7 +260,7 @@ class CategoryControllerTest extends TestCase
     /** @test */
     public function not_verified_user_cant_see_category_edit_view()
     {
-        $user = User::factory()->create(['email_verified_at' => null]);
+        $user = User::factory()->unverified()->create();
         $category = Category::factory()->forUser($user)->create();
 
         $this->actingAs($user)->get(route('categories.edit', $category))
@@ -306,10 +310,11 @@ class CategoryControllerTest extends TestCase
     /** @test */
     public function not_verified_user_cant_update_category()
     {
-        $user = User::factory()->create(['email_verified_at' => null]);
+        $user = User::factory()->unverified()->create();
         $category = Category::factory()->forUser($user)->create();
 
-        $this->actingAs($user)->put(route('categories.update', $category), Category::factory()->raw())
+        $this->actingAs($user)
+            ->put(route('categories.update', $category), Category::factory()->raw())
             ->assertRedirect(route('verification.notice'));
     }
 
@@ -319,7 +324,8 @@ class CategoryControllerTest extends TestCase
         $user = $this->logIn();
         $category = Category::factory()->forUser($user)->create();
 
-        $this->actingAs($user)->put(route('categories.update', $category), Category::factory()->raw(['title' => null]))
+        $this->actingAs($user)
+            ->put(route('categories.update', $category), Category::factory()->raw(['title' => null]))
             ->assertSessionHasErrors('title');
     }
 
@@ -329,7 +335,10 @@ class CategoryControllerTest extends TestCase
         $user = $this->logIn();
         $category = Category::factory()->forUser($user)->create();
 
-        $this->actingAs($user)->put(route('categories.update', $category), Category::factory()->raw(['title' => Str::random(256)]))
+        $this->actingAs($user)
+            ->put(route('categories.update', $category), Category::factory()->raw([
+                'title' => Str::random(256),
+            ]))
             ->assertSessionHasErrors('title');
     }
 
@@ -339,7 +348,8 @@ class CategoryControllerTest extends TestCase
         $user = $this->logIn();
         $category = Category::factory()->forUser($user)->create();
 
-        $this->actingAs($user)->put(route('categories.update', $category), Category::factory()->raw(['max_to_dos' => null]))
+        $this->actingAs($user)
+            ->put(route('categories.update', $category), Category::factory()->raw(['max_to_dos' => null]))
             ->assertSessionHasErrors('max_to_dos');
     }
 
@@ -349,7 +359,10 @@ class CategoryControllerTest extends TestCase
         $user = $this->logIn();
         $category = Category::factory()->forUser($user)->create();
 
-        $this->actingAs($user)->put(route('categories.update', $category), Category::factory()->raw(['max_to_dos' => 'not number']))
+        $this->actingAs($user)
+            ->put(route('categories.update', $category), Category::factory()->raw([
+                'max_to_dos' => 'not number',
+            ]))
             ->assertSessionHasErrors('max_to_dos');
     }
 
@@ -359,7 +372,8 @@ class CategoryControllerTest extends TestCase
         $user = $this->logIn();
         $category = Category::factory()->forUser($user)->create();
 
-        $this->actingAs($user)->put(route('categories.update', $category), Category::factory()->raw(['max_to_dos' => 0]))
+        $this->actingAs($user)
+            ->put(route('categories.update', $category), Category::factory()->raw(['max_to_dos' => 0]))
             ->assertSessionHasErrors('max_to_dos');
     }
 
@@ -450,7 +464,7 @@ class CategoryControllerTest extends TestCase
     /** @test */
     public function not_verified_user_cant_delete_category()
     {
-        $user = User::factory()->create(['email_verified_at' => null]);
+        $user = User::factory()->unverified()->create();
         $category = Category::factory()->forUser($user)->create();
 
         $this->actingAs($user)->delete(route('categories.destroy', $category))
