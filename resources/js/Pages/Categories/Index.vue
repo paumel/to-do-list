@@ -14,12 +14,12 @@
                     <div class="p-6 bg-white border-b border-gray-200 h-auto">
 
                         <div class="flex justify-between">
-                            <div>
+                            <div class="w-full">
                                 <p class="font-semibold">Filters</p>
-                                <div class="flex flex-wrap space-x-1 mt-2">
-                                    <div>
+                                <div class="flex flex-wrap space-x-1 mt-2 w-full">
+                                    <div class="flex-row w-full">
                                         <p>Tag</p>
-                                        <select name="" id="" class="rounded" v-model="queryFilters.tag_id" @change="filter">
+                                        <select name="" id="" class="rounded w-3/12" v-model="queryFilters.tag_id" @change="filter">
                                             <option value=""></option>
                                             <option v-for="tag in tags" :key="tag.id" :value="tag.id">{{ tag.name }}</option>
                                         </select>
@@ -32,8 +32,8 @@
                             </div>
                         </div>
 
-                        <div v-if="categories.length < 0">
-                            <p>There are no Categories</p>
+                        <div v-if="categories.length <= 0" class="mt-4">
+                            <p class="italic">There are no Categories</p>
                         </div>
                         <div v-else v-for="category in categories" :key="category.id">
                             <div class="flex flex-wrap justify-between items-center my-2 bg-gray-200 rounded p-2">

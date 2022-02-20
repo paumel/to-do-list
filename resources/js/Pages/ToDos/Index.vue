@@ -13,19 +13,19 @@
                 <div class="bg-white shadow-sm sm:rounded-lg">
                     <div class="p-6 bg-white border-b border-gray-200 h-auto">
                         <div class="flex justify-between">
-                            <div>
+                            <div class="w-full">
                                 <p class="font-semibold">Filters</p>
-                                <div class="flex flex-wrap space-x-1 mt-2">
-                                    <div>
+                                <div class="flex flex-wrap space-x-1 mt-2 w-full">
+                                    <div class="w-3/12">
                                         <p>Category</p>
-                                        <select name="" id="" class="rounded" v-model="queryFilters.category_id" @change="filter">
+                                        <select name="" id="" class="rounded w-full" v-model="queryFilters.category_id" @change="filter">
                                             <option value=""></option>
                                             <option v-for="category in categories" :key="category.id" :value="category.id">{{ category.title }}</option>
                                         </select>
                                     </div>
-                                    <div>
+                                    <div class="w-2/12">
                                         <p>Tag</p>
-                                        <select name="" id="" class="rounded" v-model="queryFilters.tag_id" @change="filter">
+                                        <select name="" id="" class="rounded w-full" v-model="queryFilters.tag_id" @change="filter">
                                             <option value=""></option>
                                             <option v-for="tag in tags" :key="tag.id" :value="tag.id">{{ tag.name }}</option>
                                         </select>
@@ -54,8 +54,8 @@
                             </div>
                         </div>
 
-                        <div v-if="to_dos.length <= 0">
-                            <p>There are no to dos</p>
+                        <div v-if="to_dos.length <= 0" class="mt-4">
+                            <p class="italic">There are no to dos</p>
                         </div>
                         <div v-else v-for="to_do in to_dos" :key="to_do.id">
                             <div class="flex flex-wrap justify-between items-center my-2 bg-gray-200 rounded p-2" v-bind:class="{ 'opacity-50': to_do.finished }">
@@ -63,7 +63,7 @@
                                     <input type="checkbox" class="mr-2 border-transparent focus:border-transparent focus:ring-0 focus:outline-hidden" :checked="to_do.finished" @change="toggleFinished(to_do)">
                                     <div>
                                         <p class="font-bold">{{to_do.title}}</p>
-                                        <p>{{to_do.description}}</p>
+                                        <p class="max-w-4xl">{{to_do.description}}</p>
 
                                         <div class="flex flex-wrap justify-start space-x-8">
                                             <div class="flex justify-start items-center" v-if="to_do.due_date">
