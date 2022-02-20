@@ -18,7 +18,7 @@ class CategoryFactory extends Factory
     public function definition()
     {
         return [
-            'title' => $this->faker->word(),
+            'title' => $this->faker->unique()->word(),
             'max_to_dos' => $this->faker->numberBetween(1, 10),
             'user_id' => fn() => User::factory()->create(),
         ];

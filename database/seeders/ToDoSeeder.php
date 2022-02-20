@@ -2,9 +2,10 @@
 
 namespace Database\Seeders;
 
+use App\Models\Category;
+use App\Models\Tag;
 use App\Models\ToDo;
 use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class ToDoSeeder extends Seeder
@@ -16,6 +17,9 @@ class ToDoSeeder extends Seeder
      */
     public function run()
     {
-        User::all()->each(fn (User $user) => ToDo::factory(rand(1,20))->forUser($user)->create());
+        User::all()->each(fn(User $user) => ToDo::factory(rand(3, 10))
+            ->has(
+                Tag::factory()->forUser($user)->count(rand(1, 5))
+            )->forUser($user)->create());
     }
 }

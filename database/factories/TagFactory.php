@@ -22,4 +22,13 @@ class TagFactory extends Factory
             'user_id' => fn() => User::factory()->create(),
         ];
     }
+
+    public function forUser(User $user): TagFactory
+    {
+        return $this->state(function (array $attributes) use ($user) {
+            return [
+                'user_id' => $user->id,
+            ];
+        });
+    }
 }
