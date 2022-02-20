@@ -16,16 +16,19 @@
                             <div>
                                 <label for="title">Title</label>
                                 <input id="title" v-model="form.title" class="rounded w-full border border-gray-300 py-2 px-4" />
+                                <div v-if="errors.title" class="text-red-500">{{ errors.title }}</div>
                             </div>
 
                             <div class="mt-4">
                                 <label for="description">Description</label>
                                 <textarea id="description" v-model="form.description" class="rounded w-full border border-gray-300" />
+                                <div v-if="errors.description" class="text-red-500">{{ errors.description }}</div>
                             </div>
 
                             <div class="mt-4">
                                 <label for="due_date">Due date</label>
                                 <Datepicker v-model="form.due_date" class="rounded w-full border border-gray-300" format="yyyy-MM-dd hh:mm" previewFormat="yyyy-MM-dd hh:mm"/>
+                                <div v-if="errors.due_date" class="text-red-500">{{ errors.due_date }}</div>
                             </div>
 
                             <div class="mt-4">
@@ -34,6 +37,7 @@
                                     <option value=""></option>
                                     <option :value="category.id" v-for="category in categories">{{category.title}}</option>
                                 </select>
+                                <div v-if="errors.category_id" class="text-red-500">{{ errors.category_id }}</div>
                             </div>
 
                             <div class="mt-4">
@@ -45,6 +49,7 @@
                                     <div v-for="(tag, index) in form.tags" class="mt-2">
                                         <input type="text" v-model="form.tags[index]" class="rounded border border-gray-300" />
                                         <button @click="removeTag(index)" type="button" class="border border-gray-300 rounded ml-2 mr-8 px-4 py-2">-</button>
+                                        <div v-if="errors['tags' + '.' + index]" class="text-red-500">{{ errors['tags' + '.' + index] }}</div>
                                     </div>
                                 </div>
                             </div>
@@ -71,6 +76,7 @@ import "vue3-date-time-picker/dist/main.css";
 
 defineProps({
     categories: Array,
+    errors: Object,
 })
 
 const form = reactive({

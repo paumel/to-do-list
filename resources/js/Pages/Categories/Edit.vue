@@ -16,11 +16,13 @@
                             <div>
                                 <label for="title">Title</label>
                                 <input id="title" v-model="form.title" class="rounded w-full border border-gray-300 py-2 px-4" />
+                                <div v-if="errors.title" class="text-red-500">{{ errors.title }}</div>
                             </div>
 
                             <div class="mt-4">
                                 <label for="max_to_dos">Maximum number of to dos</label>
                                 <input id="max_to_dos" type="number" v-model="form.max_to_dos" class="rounded w-full border border-gray-300" />
+                                <div v-if="errors.max_to_dos" class="text-red-500">{{ errors.max_to_dos }}</div>
                             </div>
 
                             <div class="mt-4">
@@ -32,6 +34,7 @@
                                     <div v-for="(tag, index) in form.tags" class="mt-2">
                                         <input type="text" v-model="form.tags[index]" class="rounded border border-gray-300" />
                                         <button @click="removeTag(index)" type="button" class="border border-gray-300 rounded ml-2 mr-8 px-4 py-2">-</button>
+                                        <div v-if="errors['tags' + '.' + index]" class="text-red-500">{{ errors['tags' + '.' + index] }}</div>
                                     </div>
                                 </div>
                             </div>
@@ -55,6 +58,7 @@ import {Inertia} from "@inertiajs/inertia";
 
 const props = defineProps({
     category: Object,
+    errors: Object,
 })
 
 const form = reactive({
