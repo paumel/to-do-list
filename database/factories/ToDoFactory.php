@@ -22,7 +22,7 @@ class ToDoFactory extends Factory
             'title' => $this->faker->sentence(),
             'description' => $this->faker->text(),
             'finished' => $this->faker->boolean(),
-            'due_date' => $this->faker->dateTimeBetween('now', '+5 months')->format('Y-m-d H:m:s'),
+            'due_date' => $this->faker->dateTimeBetween('now', '+5 months', 'Europe/Vilnius')->format('Y-m-d H:m:s'),
             'user_id' => fn() => User::factory()->create(),
             'category_id' => null,
         ];

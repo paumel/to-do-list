@@ -22,25 +22,25 @@ class NotifyAboutFinishedToDosTest extends TestCase
         $user = User::factory()->create();
 
         $justFinishedToDos = ToDo::factory(2)->forUser($user)->create([
-            'due_date' => Carbon::now()->toDateTimeString(),
+            'due_date' => Carbon::now('Europe/Vilnius')->toDateTimeString(),
             'finished' => false,
         ]);
 
         $justFinishedToDosButAlreadyCompleted = ToDo::factory(2)->forUser($user)->create([
-            'due_date' => Carbon::now()->toDateTimeString(),
+            'due_date' => Carbon::now('Europe/Vilnius')->toDateTimeString(),
             'finished' => true,
         ]);
 
         $oldFinishedToDos = ToDo::factory(3)->forUser($user)->create([
-            'due_date' => Carbon::now()->subDays(rand(1, 20))->toDateTimeString(),
+            'due_date' => Carbon::now('Europe/Vilnius')->subDays(rand(1, 20))->toDateTimeString(),
         ]);
 
         $notFinishedToDos = ToDo::factory(3)->forUser($user)->create([
-            'due_date' => Carbon::now()->addDays(rand(1, 20))->toDateTimeString(),
+            'due_date' => Carbon::now('Europe/Vilnius')->addDays(rand(1, 20))->toDateTimeString(),
         ]);
 
         $otherUserJustFinishedToDos = ToDo::factory(2)->forUser(User::factory()->create())->create([
-            'due_date' => Carbon::now()->toDateTimeString(),
+            'due_date' => Carbon::now('Europe/Vilnius')->toDateTimeString(),
             'finished' => false,
         ]);
 

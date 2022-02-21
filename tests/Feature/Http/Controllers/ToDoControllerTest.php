@@ -266,7 +266,7 @@ class ToDoControllerTest extends TestCase
         $this->assertDatabaseHas('to_dos', [
             'title' => $data['title'],
             'description' => $data['description'],
-            'due_date' => $data['due_date'],
+            'due_date' => Carbon::parse($data['due_date'], 'Europe/Vilnius')->setTimezone('UTC')->toDateTimeString(),
             'user_id' => $user->id,
         ]);
     }
@@ -284,7 +284,7 @@ class ToDoControllerTest extends TestCase
         $this->assertDatabaseHas('to_dos', [
             'title' => $data['title'],
             'description' => $data['description'],
-            'due_date' => $data['due_date'],
+            'due_date' => Carbon::parse($data['due_date'], 'Europe/Vilnius')->setTimezone('UTC')->toDateTimeString(),
             'user_id' => $user->id,
         ]);
 
@@ -304,7 +304,7 @@ class ToDoControllerTest extends TestCase
         $this->assertDatabaseHas('to_dos', [
             'title' => $data['title'],
             'description' => $data['description'],
-            'due_date' => $data['due_date'],
+            'due_date' => Carbon::parse($data['due_date'], 'Europe/Vilnius')->setTimezone('UTC')->toDateTimeString(),
             'user_id' => $user->id,
         ]);
 
@@ -549,7 +549,7 @@ class ToDoControllerTest extends TestCase
         $this->assertDatabaseHas('to_dos', [
             'title' => $data['title'],
             'description' => $data['description'],
-            'due_date' => $data['due_date'],
+            'due_date' => Carbon::parse($data['due_date'], 'Europe/Vilnius')->setTimezone('UTC')->toDateTimeString(),
             'user_id' => $user->id,
         ]);
     }
@@ -573,7 +573,7 @@ class ToDoControllerTest extends TestCase
         $this->assertDatabaseHas('to_dos', [
             'title' => $data['title'],
             'description' => $data['description'],
-            'due_date' => $data['due_date'],
+            'due_date' => Carbon::parse($data['due_date'], 'Europe/Vilnius')->setTimezone('UTC')->toDateTimeString(),
             'user_id' => $user->id,
         ]);
         $this->assertEquals($category->id, $toDo->fresh()->category->id);
@@ -598,7 +598,7 @@ class ToDoControllerTest extends TestCase
         $this->assertDatabaseHas('to_dos', [
             'title' => $data['title'],
             'description' => $data['description'],
-            'due_date' => $data['due_date'],
+            'due_date' => Carbon::parse($data['due_date'], 'Europe/Vilnius')->setTimezone('UTC')->toDateTimeString(),
             'user_id' => $user->id,
         ]);
 
