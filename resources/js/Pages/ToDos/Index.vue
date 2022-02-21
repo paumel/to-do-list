@@ -12,6 +12,13 @@
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div class="bg-white shadow-sm sm:rounded-lg">
                     <div class="p-6 bg-white border-b border-gray-200 h-auto">
+                        <div v-if="$page.props.flash.success" class="mb-8 flex items-center justify-between bg-emerald-500 rounded w-full">
+                            <div class="flex items-center">
+                                <svg class="ml-4 mr-2 shrink-0 w-4 h-4" fill="white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><polygon points="0 11 2 9 7 14 18 3 20 5 7 18" /></svg>
+                                <div class="py-4 text-white text-sm font-medium">{{ $page.props.flash.success }}</div>
+                            </div>
+                        </div>
+
                         <div class="flex justify-between">
                             <div class="w-full">
                                 <p class="font-semibold">Filters</p>
