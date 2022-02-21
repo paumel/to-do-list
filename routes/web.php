@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ToDoController;
-use App\Http\Controllers\ToggleToDoFinishedController;
+use App\Http\Controllers\ToggleToDoCompletedController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -29,7 +29,7 @@ Route::get('/', function () {
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('to-dos', ToDoController::class)->except(['show']);
-    Route::put('to-dos/{to_do}/toggle', ToggleToDoFinishedController::class)->name('to-dos.toggle');
+    Route::put('to-dos/{to_do}/toggle', ToggleToDoCompletedController::class)->name('to-dos.toggle');
 
     Route::resource('categories', CategoryController::class)->except(['show']);
 });

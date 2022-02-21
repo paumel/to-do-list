@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\ToDo;
 use Illuminate\Http\Request;
 
-class ToggleToDoFinishedController extends Controller
+class ToggleToDoCompletedController extends Controller
 {
     /**
      * Handle the incoming request.
