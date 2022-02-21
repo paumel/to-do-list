@@ -21,7 +21,7 @@ class NotifyAboutExpiredToDos extends Command
      *
      * @var string
      */
-    protected $description = 'This command notifies about finished to dos';
+    protected $description = 'This command notifies about expired to dos';
 
     /**
      * Create a new command instance.

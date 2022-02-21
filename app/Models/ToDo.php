@@ -19,7 +19,7 @@ class ToDo extends Model
     protected $fillable = [
         'title',
         'description',
-        'finished',
+        'completed',
         'due_date',
         'user_id',
         'category_id',
@@ -31,7 +31,7 @@ class ToDo extends Model
      * @var array
      */
     protected $casts = [
-        'finished' => 'boolean',
+        'completed' => 'boolean',
     ];
 
     public function user(): BelongsTo
@@ -53,7 +53,7 @@ class ToDo extends Model
     {
         return $query->whereDate('due_date', $date)
             ->whereTime('due_date', 'like', $date->toTimeString('minute') . ':%')
-            ->where('finished', false);
+            ->where('completed', false);
     }
 
     public function scopeFilter(Builder $query, array $filters): Builder
@@ -66,8 +66,8 @@ class ToDo extends Model
             $query->hasCategoryId($filters['category_id']);
         }
 
-        if (isset($filters['finished'])) {
-            $query->where('finished', $filters['finished']);
+        if (isset($filters['completed'])) {
+            $query->where('completed', $filters['completed']);
         }
 
         if (isset($filters['start_date'])) {

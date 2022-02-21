@@ -27,7 +27,7 @@ class ToDoFilterRequest extends FormRequest
         return [
             'category_id' => ['nullable', Rule::exists('categories', 'id')],
             'tag_id' => ['nullable', Rule::exists('tags', 'id')],
-            'finished' => ['nullable', 'boolean'],
+            'completed' => ['nullable', 'boolean'],
             'start_date' => ['nullable', 'date'],
             'end_date' => ['nullable', 'date'],
         ];

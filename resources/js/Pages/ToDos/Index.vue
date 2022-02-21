@@ -32,10 +32,10 @@
                                     </div>
                                     <div>
                                         <p>Status</p>
-                                        <select name="" id="" class="rounded" v-model="queryFilters.finished" @change="filter">
+                                        <select name="" id="" class="rounded" v-model="queryFilters.completed" @change="filter">
                                             <option value=""></option>
                                             <option value="0">Active</option>
-                                            <option value="1">Finished</option>
+                                            <option value="1">Completed</option>
                                         </select>
                                     </div>
                                     <div>
@@ -58,9 +58,9 @@
                             <p class="italic">There are no to dos</p>
                         </div>
                         <div v-else v-for="to_do in to_dos" :key="to_do.id">
-                            <div class="flex flex-wrap justify-between items-center my-2 bg-gray-200 rounded p-2" v-bind:class="{ 'opacity-50': to_do.finished }">
+                            <div class="flex flex-wrap justify-between items-center my-2 bg-gray-200 rounded p-2" v-bind:class="{ 'opacity-50': to_do.completed }">
                                 <div class="flex items-center">
-                                    <input type="checkbox" class="mr-2 border-transparent focus:border-transparent focus:ring-0 focus:outline-hidden" :checked="to_do.finished" @change="toggleFinished(to_do)">
+                                    <input type="checkbox" class="mr-2 border-transparent focus:border-transparent focus:ring-0 focus:outline-hidden" :checked="to_do.completed" @change="toggleFinished(to_do)">
                                     <div>
                                         <p class="font-bold">{{to_do.title}}</p>
                                         <p class="max-w-4xl">{{to_do.description}}</p>
@@ -115,7 +115,7 @@ const props = defineProps({
 const queryFilters = {
     category_id: props.filters.category_id,
     tag_id: props.filters.tag_id,
-    finished: props.filters.finished,
+    completed: props.filters.completed,
 }
 
 const start_date = props.filters.start_date ? ref(new Date(props.filters.start_date)) : ref(null)

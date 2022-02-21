@@ -22735,7 +22735,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     var queryFilters = {
       category_id: props.filters.category_id,
       tag_id: props.filters.tag_id,
-      finished: props.filters.finished
+      completed: props.filters.completed
     };
     var start_date = props.filters.start_date ? (0,vue__WEBPACK_IMPORTED_MODULE_4__.ref)(new Date(props.filters.start_date)) : (0,vue__WEBPACK_IMPORTED_MODULE_4__.ref)(null);
     var end_date = props.filters.end_date ? (0,vue__WEBPACK_IMPORTED_MODULE_4__.ref)(new Date(props.filters.end_date)) : (0,vue__WEBPACK_IMPORTED_MODULE_4__.ref)(null);
@@ -25214,7 +25214,7 @@ var _hoisted_20 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElement
 
 var _hoisted_21 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("option", {
   value: "1"
-}, "Finished", -1
+}, "Completed", -1
 /* HOISTED */
 );
 
@@ -25360,12 +25360,12 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
         id: "",
         "class": "rounded",
         "onUpdate:modelValue": _cache[2] || (_cache[2] = function ($event) {
-          return $setup.queryFilters.finished = $event;
+          return $setup.queryFilters.completed = $event;
         }),
         onChange: $setup.filter
       }, _hoisted_22, 544
       /* HYDRATE_EVENTS, NEED_PATCH */
-      ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelSelect, $setup.queryFilters.finished]])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, [_hoisted_23, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)($setup["Datepicker"], {
+      ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelSelect, $setup.queryFilters.completed]])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, [_hoisted_23, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)($setup["Datepicker"], {
         modelValue: $setup.start_date,
         "onUpdate:modelValue": _cache[3] || (_cache[3] = function ($event) {
           return $setup.start_date = $event;
@@ -25404,12 +25404,12 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
           key: to_do.id
         }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
           "class": (0,vue__WEBPACK_IMPORTED_MODULE_0__.normalizeClass)(["flex flex-wrap justify-between items-center my-2 bg-gray-200 rounded p-2", {
-            'opacity-50': to_do.finished
+            'opacity-50': to_do.completed
           }])
         }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_29, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
           type: "checkbox",
           "class": "mr-2 border-transparent focus:border-transparent focus:ring-0 focus:outline-hidden",
-          checked: to_do.finished,
+          checked: to_do.completed,
           onChange: function onChange($event) {
             return $setup.toggleFinished(to_do);
           }

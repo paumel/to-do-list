@@ -19,7 +19,7 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->text('description');
-            $table->boolean('finished')->default(0);
+            $table->boolean('completed')->default(0);
             $table->dateTime('due_date')->nullable();
             $table->foreignIdFor(User::class);
             $table->foreignIdFor(Category::class)->nullable()->constrained()->nullOnDelete();

@@ -18,7 +18,7 @@ class ToggleToDoFinishedController extends Controller
     {
         abort_if($request->user()->cannot('update', $toDo), 403);
 
-        $toDo->update(['finished' => !$toDo->finished]);
+        $toDo->update(['completed' => !$toDo->completed]);
 
         return back();
     }

@@ -59,7 +59,7 @@ class ToDoControllerTest extends TestCase
         $this->actingAs($user)->get(route('to-dos.index', [
             'tag_id' => $tag->id,
             'category_id' => $category->id,
-            'finished' => 1,
+            'completed' => 1,
             'start_date' => Carbon::today()->toDateString(),
             'end_date' => Carbon::tomorrow()->toDateString(),
         ]))->assertSuccessful()

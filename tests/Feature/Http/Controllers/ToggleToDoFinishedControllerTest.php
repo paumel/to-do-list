@@ -44,16 +44,16 @@ class ToggleToDoFinishedControllerTest extends TestCase
     public function verified_user_can_toggle_to_do_finished_field()
     {
         $user = $this->logIn();
-        $toDo = ToDo::factory()->forUser($user)->create(['finished' => false]);
+        $toDo = ToDo::factory()->forUser($user)->create(['completed' => false]);
 
         $this->actingAs($user)->put(route('to-dos.toggle', $toDo))
             ->assertRedirect();
 
-        $this->assertEquals(true, $toDo->fresh()->finished);
+        $this->assertEquals(true, $toDo->fresh()->completed);
 
         $this->actingAs($user)->put(route('to-dos.toggle', $toDo))
             ->assertRedirect();
 
-        $this->assertEquals(false, $toDo->fresh()->finished);
+        $this->assertEquals(false, $toDo->fresh()->completed);
     }
 }

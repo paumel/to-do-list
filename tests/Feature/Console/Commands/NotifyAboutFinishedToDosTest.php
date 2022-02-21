@@ -23,12 +23,12 @@ class NotifyAboutFinishedToDosTest extends TestCase
 
         $justFinishedToDos = ToDo::factory(2)->forUser($user)->create([
             'due_date' => Carbon::now('Europe/Vilnius')->toDateTimeString(),
-            'finished' => false,
+            'completed' => false,
         ]);
 
         $justFinishedToDosButAlreadyCompleted = ToDo::factory(2)->forUser($user)->create([
             'due_date' => Carbon::now('Europe/Vilnius')->toDateTimeString(),
-            'finished' => true,
+            'completed' => true,
         ]);
 
         $oldFinishedToDos = ToDo::factory(3)->forUser($user)->create([
@@ -41,7 +41,7 @@ class NotifyAboutFinishedToDosTest extends TestCase
 
         $otherUserJustFinishedToDos = ToDo::factory(2)->forUser(User::factory()->create())->create([
             'due_date' => Carbon::now('Europe/Vilnius')->toDateTimeString(),
-            'finished' => false,
+            'completed' => false,
         ]);
 
         $this->artisan(NotifyAboutExpiredToDos::class)->assertExitCode(0);
