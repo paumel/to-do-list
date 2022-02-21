@@ -3,8 +3,10 @@
 namespace App\Models;
 
 use App\Traits\HasTags;
+use Carbon\Carbon;
 use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -50,6 +52,7 @@ class ToDo extends Model
     public function scopeExpiredOnDate(Builder $query, CarbonInterface $date): Builder
     {
         return $query->whereDate('due_date', $date)
+            ->whereTime('due_date', 'like', $date->toTimeString('minute') . ':%')
             ->where('finished', false);
     }
 
@@ -83,5 +86,13 @@ class ToDo extends Model
         return $query->whereHas('category', function ($query) use ($category_id) {
             $query->where('categories.id', $category_id);
         });
+    }
+
+    protected function dueDate(): Attribute
+    {
+        return new Attribute(
+            get: fn ($value) => Carbon::parse($value)->setTimezone('Europe/Vilnius')->toDateTimeString(),
+            set: fn ($value) => Carbon::parse($value, 'Europe/Vilnius')->setTimezone('UTC')->toDateTimeString(),
+        );
     }
 }

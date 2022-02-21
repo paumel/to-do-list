@@ -3,11 +3,11 @@
 namespace App\Console\Commands;
 
 use App\Models\ToDo;
-use App\Notifications\FinishedToDosNotification;
+use App\Notifications\ExpiredToDosNotification;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 
-class NotifyAboutFinishedToDos extends Command
+class NotifyAboutExpiredToDos extends Command
 {
     /**
      * The name and signature of the console command.
@@ -21,7 +21,7 @@ class NotifyAboutFinishedToDos extends Command
      *
      * @var string
      */
-    protected $description = 'This command notifies about yesterday finished to dos';
+    protected $description = 'This command notifies about finished to dos';
 
     /**
      * Create a new command instance.
@@ -41,11 +41,11 @@ class NotifyAboutFinishedToDos extends Command
     public function handle()
     {
         ToDo::with(['user'])
-            ->expiredOnDate(Carbon::yesterday())
+            ->expiredOnDate(Carbon::now())
             ->get()
             ->groupBy('user_id')
             ->each(function ($toDos) {
-                $toDos->first()->user->notify(new FinishedToDosNotification($toDos));
+                $toDos->first()->user->notify(new ExpiredToDosNotification($toDos));
             });
 
         return 0;

@@ -7,7 +7,7 @@ use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Collection;
 
-class FinishedToDosNotification extends Notification
+class ExpiredToDosNotification extends Notification
 {
     use Queueable;
 
@@ -40,7 +40,7 @@ class FinishedToDosNotification extends Notification
     public function toMail($notifiable)
     {
         $message = (new MailMessage)
-            ->line('These to dos finished yesterday:')
+            ->line('These to dos have just expired:')
             ->lines($this->toDos->pluck('title'))
             ->action('View other to dos', route('to-dos.index'))
             ->line('Thank you for using our application!');

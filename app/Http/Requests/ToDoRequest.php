@@ -39,7 +39,7 @@ class ToDoRequest extends FormRequest
             'title' => ['required', 'string', 'max:255'],
             'description' => ['required', 'string'],
             'due_date' => ['nullable', 'date', 'after_or_equal:' . $minDate],
-            'category_id' => ['nullable', Rule::in($userCategoryIds), new CategoryHasFreeSpaces()],
+            'category_id' => ['nullable', Rule::in($userCategoryIds), new CategoryHasFreeSpaces($toDo?->category?->id)],
             'tags' => ['array', 'min:0'],
             'tags.*' => ['required', 'string', 'max:255'],
         ];

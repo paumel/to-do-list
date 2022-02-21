@@ -27,7 +27,7 @@
 
                             <div class="mt-4">
                                 <label for="due_date">Due date</label>
-                                <Datepicker v-model="form.due_date" class="rounded w-full border border-gray-300" format="yyyy-MM-dd hh:mm" previewFormat="yyyy-MM-dd hh:mm"/>
+                                <Datepicker v-model="form.due_date" class="rounded w-full border border-gray-300" format="yyyy-MM-dd HH:mm" previewFormat="yyyy-MM-dd HH:mm"/>
                                 <div v-if="errors.due_date" class="text-red-500">{{ errors.due_date }}</div>
                             </div>
 
@@ -89,7 +89,7 @@ const form = reactive({
 })
 
 function submit() {
-    form.due_date = form.due_date ? format(form.due_date, 'yyyy-MM-dd hh:mm:ss') : null
+    form.due_date = form.due_date ? format(form.due_date, 'yyyy-MM-dd HH:mm:ss') : null
     Inertia.put(route('to-dos.update', props.toDo), form, {
         onError: (errors) => {
             form.due_date = form.due_date ? ref(new Date(form.due_date)) : ref(null)

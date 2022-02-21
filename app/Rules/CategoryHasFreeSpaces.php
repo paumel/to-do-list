@@ -12,20 +12,22 @@ class CategoryHasFreeSpaces implements Rule
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(public ?int $exceptId = null)
     {
-        //
     }
 
     /**
      * Determine if the validation rule passes.
      *
-     * @param  string  $attribute
-     * @param  mixed  $value
+     * @param string $attribute
+     * @param mixed $value
      * @return bool
      */
     public function passes($attribute, $value)
     {
+        if ($this->exceptId === $value) {
+            return true;
+        }
         return (Category::find($value)?->remaining_to_dos_count ?? 0) > 0;
     }
 

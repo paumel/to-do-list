@@ -22565,7 +22565,7 @@ __webpack_require__.r(__webpack_exports__);
     });
 
     function submit() {
-      form.due_date = form.due_date ? (0,date_fns__WEBPACK_IMPORTED_MODULE_6__["default"])(form.due_date, 'yyyy-MM-dd hh:mm:ss') : null;
+      form.due_date = form.due_date ? (0,date_fns__WEBPACK_IMPORTED_MODULE_6__["default"])(form.due_date, 'yyyy-MM-dd HH:mm:ss') : null;
       _inertiajs_inertia__WEBPACK_IMPORTED_MODULE_3__.Inertia.post(route('to-dos.store'), form, {
         onError: function onError(errors) {
           form.due_date = form.due_date ? (0,vue__WEBPACK_IMPORTED_MODULE_0__.ref)(new Date(form.due_date)) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.ref)(null);
@@ -22650,7 +22650,7 @@ __webpack_require__.r(__webpack_exports__);
     });
 
     function submit() {
-      form.due_date = form.due_date ? (0,date_fns__WEBPACK_IMPORTED_MODULE_6__["default"])(form.due_date, 'yyyy-MM-dd hh:mm:ss') : null;
+      form.due_date = form.due_date ? (0,date_fns__WEBPACK_IMPORTED_MODULE_6__["default"])(form.due_date, 'yyyy-MM-dd HH:mm:ss') : null;
       _inertiajs_inertia__WEBPACK_IMPORTED_MODULE_3__.Inertia.put(route('to-dos.update', props.toDo), form, {
         onError: function onError(errors) {
           form.due_date = form.due_date ? (0,vue__WEBPACK_IMPORTED_MODULE_0__.ref)(new Date(form.due_date)) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.ref)(null);
@@ -24823,8 +24823,8 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
           return $setup.form.due_date = $event;
         }),
         "class": "rounded w-full border border-gray-300",
-        format: "yyyy-MM-dd hh:mm",
-        previewFormat: "yyyy-MM-dd hh:mm"
+        format: "yyyy-MM-dd HH:mm",
+        previewFormat: "yyyy-MM-dd HH:mm"
       }, null, 8
       /* PROPS */
       , ["modelValue"]), $props.errors.due_date ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_14, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.errors.due_date), 1
@@ -25049,8 +25049,8 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
           return $setup.form.due_date = $event;
         }),
         "class": "rounded w-full border border-gray-300",
-        format: "yyyy-MM-dd hh:mm",
-        previewFormat: "yyyy-MM-dd hh:mm"
+        format: "yyyy-MM-dd HH:mm",
+        previewFormat: "yyyy-MM-dd HH:mm"
       }, null, 8
       /* PROPS */
       , ["modelValue"]), $props.errors.due_date ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_14, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.errors.due_date), 1
